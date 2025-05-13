@@ -1,6 +1,6 @@
 # 🐾 Pokémon Safari Zone - Terminal Edition
 
-A fun command-line Pokémon Safari Zone simulator inspired by classic Game Boy mechanics. Explore, encounter wild Pokémon, throw Safari Balls, use bait or mud, and catch 'em all – all from your terminal!
+A fun command-line Pokémon Safari Zone simulator with a beautiful terminal interface. Explore, encounter wild Pokémon, throw Safari Balls, use bait or mud, and catch 'em all – all from your terminal!
 
 ![screenshot](assets/screenshot.png) <!-- optional if you add one -->
 
@@ -15,7 +15,13 @@ A fun command-line Pokémon Safari Zone simulator inspired by classic Game Boy m
 - 🏃 Fleeing logic based on stats
 - 📦 Collection is saved locally in `pokedex.json`
 - 📖 Built-in Pokédex viewer
-- ⚔️ Optional fighting system (basic turn-based battle)
+- 🎨 Beautiful terminal UI with:
+  - Colorful headers and borders
+  - Pokémon-themed icons and emojis
+  - Loading animations
+  - Clear visual hierarchy
+  - Status indicators
+  - Inventory management
 
 ---
 
@@ -33,3 +39,50 @@ To install `catimg`:
 ```bash
 brew install catimg         # macOS (via Homebrew)
 sudo apt install catimg     # Debian/Ubuntu
+```
+
+## 🚀 Getting Started
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/pokecatch.git
+cd pokecatch
+```
+
+2. Make the game executable:
+```bash
+chmod +x src/game.sh
+```
+
+3. Run the game:
+```bash
+./src/game.sh
+```
+
+## 🎯 How to Play
+
+1. Enter the Safari Zone to look for wild Pokémon
+2. When you encounter a Pokémon, you can:
+   - Throw a Safari Ball to catch it
+   - Throw a Berry to make it easier to catch
+   - Throw Mud to make it harder to catch
+   - Run away
+3. Visit the shop to buy more items
+4. Check your Pokédex to see your collection
+5. Monitor your status to track your progress
+
+## 🎨 Terminal Requirements
+
+The game uses ANSI colors and Unicode characters for its interface. Make sure your terminal:
+- Supports ANSI color codes
+- Uses UTF-8 encoding
+- Can display Unicode characters (for icons and emojis)
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Pokémon sprites and data from [PokéAPI](https://pokeapi.co/)
+- Inspired by the classic Pokémon Safari Zone mechanics
