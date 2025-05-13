@@ -1,0 +1,5 @@
+# Ignore temporary image files
+/tmp/pokemon_image.*
+
+# Ignore pokedex if user doesn't want to commit progress
+pokedex.json
