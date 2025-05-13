@@ -5,6 +5,7 @@ source ./pokemon.sh
 source ./items.sh
 source ./status.sh
 source ./shop.sh
+source ./style.sh
 
 # Initialize game data
 load_progress
@@ -18,42 +19,60 @@ safari() {
     
     while true; do
         if [ "$POKEMON_ENCOUNTERED" = false ]; then
-            echo "You are in the Safari Zone!"
-            echo "[1] Look for Pokémon"
-            echo "[2] Go Back"
+            print_header
+            print_menu_option "1" "$SAFARI" "Look for Pokémon"
+            print_menu_option "2" "$EXIT" "Go Back"
             read -p "What will you do? " SAFARI_CHOICE
             
             case $SAFARI_CHOICE in
                 1)
+                    print_loading "Searching for Pokémon"
                     # 30% chance to encounter a Pokémon
                     if [ $((RANDOM % 100)) -lt 30 ]; then
                         POKEMON_ENCOUNTERED=true
                         get_random_pokemon
                     else
-                        echo "You search the area but find no Pokémon..."
+                        print_warning "You search the area but find no Pokémon..."
                     fi
                     ;;
                 2)
-                    echo "You decide to go back to the main area."
+                    print_success "You decide to go back to the main area."
                     return
                     ;;
                 *)
-                    echo "Invalid choice. Please choose again."
+                    print_error "Invalid choice. Please choose again."
                     ;;
             esac
         else
-            echo "A wild Pokémon appears! What will you do?"
-            echo "[1] Throw a Ball"
-            echo "[2] Throw a Berry"
-            echo "[3] Throw Mud"
-            echo "[4] Run Away"
+            print_divider
+            print_menu_option "1" "$POKEBALL" "Throw a Ball"
+            print_menu_option "2" "$BERRY" "Throw a Berry"
+            print_menu_option "3" "$MUD" "Throw Mud"
+            print_menu_option "4" "$EXIT" "Run Away"
             read -p "What will you do? " SAFARI_CHOICE
 
             case $SAFARI_CHOICE in
                 1)
                     throw_ball
-                    if [ $? -eq 0 ]; then
+                    local BALL_RESULT=$?
+                    if [ $BALL_RESULT -eq 0 ]; then
                         POKEMON_ENCOUNTERED=false
+                    elif [ $BALL_RESULT -eq 2 ]; then
+                        print_warning "You need Pokeballs to catch Pokémon! Visit the shop to buy some."
+                        print_menu_option "1" "$SHOP" "Go to Shop"
+                        print_menu_option "2" "$EXIT" "Stay Here"
+                        read -p "What will you do? " SHOP_CHOICE
+                        case $SHOP_CHOICE in
+                            1)
+                                show_shop
+                                ;;
+                            2)
+                                print_success "You decide to stay and observe the Pokémon."
+                                ;;
+                            *)
+                                print_error "Invalid choice. Staying here."
+                                ;;
+                        esac
                     fi
                     ;;
                 2)
@@ -67,18 +86,24 @@ safari() {
                     POKEMON_EATING=false
                     ;;
                 4)
-                    echo "You ran away from the wild Pokémon."
+                    print_warning "You ran away from the wild Pokémon."
                     POKEMON_ENCOUNTERED=false
                     MUD_THROWN="false"
                     BERRY_THROWN="false"
                     ;;
                 *)
-                    echo "Invalid choice. Please choose again."
+                    print_error "Invalid choice. Please choose again."
                     ;;
             esac
             
             # Check if Pokémon flees (higher chance if angry, lower if eating)
             if [ "$POKEMON_ENCOUNTERED" = true ]; then
+                # Don't let Pokemon flee if player has no Pokeballs
+                if [[ ${INVENTORY["Pokeball"]} -le 0 ]]; then
+                    print_warning "The Pokémon seems to be waiting for you to get some Pokeballs..."
+                    continue
+                fi
+
                 local FLEE_CHANCE=20
                 if [ "$POKEMON_ANGRY" = true ]; then
                     FLEE_CHANCE=40
@@ -87,7 +112,7 @@ safari() {
                 fi
                 
                 if [ $((RANDOM % 100)) -lt $FLEE_CHANCE ]; then
-                    echo "The wild Pokémon fled!"
+                    print_warning "The wild Pokémon fled!"
                     POKEMON_ENCOUNTERED=false
                     MUD_THROWN="false"
                     BERRY_THROWN="false"
@@ -97,10 +122,28 @@ safari() {
     done
 }
 
+# Function to display current items
+show_current_items() {
+    echo -e "${CYAN}Current Items:${NC}"
+    for item in "${!INVENTORY[@]}"; do
+        if [ "${INVENTORY[$item]}" -gt 0 ]; then
+            print_inventory_item "$item" "${INVENTORY[$item]}"
+        fi
+    done
+    print_divider
+}
+
 # Main Game Loop
 while true; do
-    echo "Welcome to the Safari Zone!"
-    echo -e "[1] Enter Safari Zone | [2] View Pokédex | [3] Check Status | [4] Visit Shop | [5] Exit"
+    print_header
+    print_money
+    print_divider
+    show_current_items
+    print_menu_option "1" "$SAFARI" "Enter Safari Zone"
+    print_menu_option "2" "$POKEDEX" "View Pokédex"
+    print_menu_option "3" "$STATUS" "Check Status"
+    print_menu_option "4" "$SHOP" "Visit Shop"
+    print_menu_option "5" "$EXIT" "Exit Game"
     read -p "What will you do? " CHOICE
 
     case $CHOICE in
@@ -117,13 +160,13 @@ while true; do
             show_shop  # Visit the shop
             ;;
         5)
-            echo "Exiting the game. Goodbye!"
+            print_success "Exiting the game. Goodbye!"
             save_progress  # Save game progress
             save_pokedex  # Save the Pokédex data
             exit 0
             ;;
         *)
-            echo "Invalid option. Please choose again."
+            print_error "Invalid option. Please choose again."
             ;;
     esac
 done

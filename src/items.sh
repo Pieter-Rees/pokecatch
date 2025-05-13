@@ -3,8 +3,8 @@
 # Throw a Safari Ball to catch Pokémon
 throw_ball() {
     if [[ ${INVENTORY["Pokeball"]} -le 0 ]]; then
-        echo "You don't have any Pokeballs left!"
-        return 1
+        print_error "You don't have any Pokeballs left!"
+        return 2  # Special return code for no Pokeballs
     fi
 
     # Decrease ball count
@@ -25,11 +25,11 @@ throw_ball() {
     
     # Attempt to catch
     if [ $((RANDOM % 100)) -lt $CATCH_PROBABILITY ]; then
-        echo "Gotcha! The Pokémon was caught!"
+        print_success "Gotcha! The Pokémon was caught!"
         catch_pokemon "$POKEMON_NAME" $CATCH_PROBABILITY
         return 0
     else
-        echo "Oh no! The Pokémon broke free!"
+        print_warning "Oh no! The Pokémon broke free!"
         return 1
     fi
 }
@@ -37,15 +37,15 @@ throw_ball() {
 # Throw a Berry to make the Pokémon eat
 throw_berry() {
     if [[ ${INVENTORY["Berry"]} -le 0 ]]; then
-        echo "You don't have any Berries left!"
+        print_error "You don't have any Berries left!"
         return 1
     fi
 
     # Decrease berry count
     INVENTORY["Berry"]=$((INVENTORY["Berry"] - 1))
     
-    echo "You threw a Berry!"
-    echo "The wild Pokémon is eating the Berry..."
+    print_success "You threw a Berry!"
+    print_warning "The wild Pokémon is eating the Berry..."
     BERRY_THROWN="true"
     return 0
 }
@@ -53,15 +53,15 @@ throw_berry() {
 # Throw Mud to make the Pokémon angry
 throw_mud() {
     if [[ ${INVENTORY["Mud"]} -le 0 ]]; then
-        echo "You don't have any Mud left!"
+        print_error "You don't have any Mud left!"
         return 1
     fi
 
     # Decrease mud count
     INVENTORY["Mud"]=$((INVENTORY["Mud"] - 1))
     
-    echo "You threw Mud!"
-    echo "The wild Pokémon is getting angry..."
+    print_success "You threw Mud!"
+    print_warning "The wild Pokémon is getting angry..."
     MUD_THROWN="true"
     return 0
 }

@@ -57,27 +57,38 @@ save_pokedex() {
 
 # Show current player status (Money, Caught Pokémon, Inventory)
 show_status() {
-    echo "💰 Money: \$${MONEY}"
-    echo "Caught Pokémon: ${#CAUGHT_POKEMON[@]}"
-    echo "Pokédex: ${CAUGHT_POKEMON[@]}"
-    echo "Inventory: "
-    for item in "${!INVENTORY[@]}"; do
-        echo "$item: ${INVENTORY[$item]}"
+    print_header
+    print_money
+    print_divider
+    echo -e "${CYAN}Caught Pokémon:${NC} ${#CAUGHT_POKEMON[@]}"
+    echo -e "${CYAN}Pokédex:${NC}"
+    for pokemon in "${CAUGHT_POKEMON[@]}"; do
+        echo -e "  ${POKEMON} $pokemon"
     done
+    print_divider
+    echo -e "${CYAN}Inventory:${NC}"
+    for item in "${!INVENTORY[@]}"; do
+        print_inventory_item "$item" "${INVENTORY[$item]}"
+    done
+    print_divider
 }
 
 # Show Pokédex contents
 show_pokedex() {
+    print_header
     if [ ${#CAUGHT_POKEMON[@]} -eq 0 ]; then
-        echo "Your Pokédex is empty. Go catch some Pokémon!"
+        print_warning "Your Pokédex is empty. Go catch some Pokémon!"
         return
     fi
 
-    echo "=== Your Pokédex ==="
-    echo "Total Pokémon caught: ${#CAUGHT_POKEMON[@]}"
-    echo "-------------------"
+    echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${PURPLE}║${NC}  ${POKEDEX} Your Pokédex ${POKEDEX}  ${PURPLE}║${NC}"
+    echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+    print_divider
+    echo -e "${CYAN}Total Pokémon caught:${NC} ${#CAUGHT_POKEMON[@]}"
+    print_divider
     for pokemon in "${CAUGHT_POKEMON[@]}"; do
-        echo "• $pokemon"
+        echo -e "  ${POKEMON} $pokemon"
     done
-    echo "-------------------"
+    print_divider
 }
