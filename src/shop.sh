@@ -6,12 +6,14 @@ ITEM_COSTS=(200 100 50)
 
 # Function to display the shop menu
 show_shop() {
-    echo -e "Welcome to the Safari Zone Shop!\n"
-    echo "Available items for sale:"
+    print_header
+    print_money
+    print_divider
+    echo -e "${CYAN}Available items for sale:${NC}"
     for i in "${!ITEMS[@]}"; do
-        echo "[$((i+1))] ${ITEMS[$i]} - \$${ITEM_COSTS[$i]}"
+        print_menu_option "$((i+1))" "$(get_item_icon "${ITEMS[$i]}")" "${ITEMS[$i]} - \$${ITEM_COSTS[$i]}"
     done
-    echo "[0] Leave Shop"
+    print_menu_option "0" "$EXIT" "Leave Shop"
     read -p "What would you like to buy? " CHOICE
 
     case $CHOICE in
@@ -25,13 +27,24 @@ show_shop() {
             buy_item "Mud" 50
             ;;
         0)
-            echo "Leaving the shop..."
+            print_success "Leaving the shop..."
             return
             ;;
         *)
-            echo "Invalid option. Try again."
+            print_error "Invalid option. Try again."
             show_shop
             ;;
+    esac
+}
+
+# Function to get item icon
+get_item_icon() {
+    local item=$1
+    case $item in
+        "Pokeball") echo "$POKEBALL" ;;
+        "Berry") echo "$BERRY" ;;
+        "Mud") echo "$MUD" ;;
+        *) echo "•" ;;
     esac
 }
 
@@ -45,8 +58,8 @@ buy_item() {
         MONEY=$((MONEY - ITEM_COST))
         INVENTORY["$ITEM_NAME"]=$((CURRENT_COUNT + 1))
         save_progress  # Save progress after buying an item
-        echo "You bought a $ITEM_NAME! You now have ${INVENTORY[$ITEM_NAME]} $ITEM_NAME(s)."
+        print_success "You bought a $ITEM_NAME! You now have ${INVENTORY[$ITEM_NAME]} $ITEM_NAME(s)."
     else
-        echo "You don't have enough money to buy $ITEM_NAME."
+        print_error "You don't have enough money to buy $ITEM_NAME."
     fi
 }

@@ -1,6 +1,4 @@
 {
         "money": 1000,
-        "inventory": {
-  "0": 1
-}
+        "inventory": {}
     }
