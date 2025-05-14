@@ -9,6 +9,9 @@ install:
 	@mkdir -p $(DESTDIR)/usr/local/bin
 	@mkdir -p $(DESTDIR)/usr/local/lib/pokecatch
 	@mkdir -p $(DESTDIR)/usr/local/share/pokecatch
+	@mkdir -p data
+	@echo '{"pokedex": [], "monster_stats": {}}' > data/pokedex.json
+	@echo '{"money": 1000, "inventory": {}, "encounter_stats": {}}' > data/save.json
 	@cp bin/pokecatch $(DESTDIR)/usr/local/bin/
 	@cp lib/*.sh $(DESTDIR)/usr/local/lib/pokecatch/
 	@cp data/*.json $(DESTDIR)/usr/local/share/pokecatch/
