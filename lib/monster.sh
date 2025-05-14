@@ -143,34 +143,3 @@ add_to_pokedex() {
         save_pokedex
     fi
 }
-
-# Show the Pokédex
-show_pokedex() {
-    print_header
-    print_divider
-    echo -e "${CYAN}Your Pokédex:${NC}"
-    
-    if [ ${#CAUGHT_MONSTER[@]} -eq 0 ]; then
-        print_warning "Your Pokédex is empty. Go catch some Monsters!"
-    else
-        for monster in "${CAUGHT_MONSTER[@]}"; do
-            print_divider
-            # Capitalize first letter of Monster name
-            monster_name=$(echo "$monster" | sed 's/^./\U&/')
-            echo -e "${YELLOW}$monster_name${NC}"
-            
-            # Display stats if available
-            if [[ -n "${MONSTER_STATS_ARRAY[$monster]}" ]]; then
-                echo -e "${CYAN}Stats:${NC}"
-                echo "${MONSTER_STATS_ARRAY[$monster]}" | tr '|' '\n' | while IFS=':' read -r stat_name stat_value; do
-                    # Capitalize and format stat name
-                    stat_name=$(echo "$stat_name" | sed 's/^./\U&/')
-                    echo -e "  ${YELLOW}$stat_name${NC}: $stat_value"
-                done
-            fi
-        done
-    fi
-    
-    print_divider
-    read -p "Press Enter to continue..."
-}

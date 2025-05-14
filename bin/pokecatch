@@ -1,17 +1,29 @@
 #!/bin/bash
 
 # ============================================================================
+# Script Directory Detection
+# ============================================================================
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+GAME_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# Determine library and data directories
+LIB_DIR="$GAME_ROOT/lib"
+DATA_DIR="$GAME_ROOT/data"
+mkdir -p "$DATA_DIR"
+
+# ============================================================================
 # Import Dependencies
 # ============================================================================
-source "lib/monster.sh"
-source "lib/items.sh"
-source "lib/status.sh"
-source "lib/shop.sh"
-source "lib/style.sh"
+source "$LIB_DIR/monster.sh"
+source "$LIB_DIR/items.sh"
+source "$LIB_DIR/status.sh"
+source "$LIB_DIR/shop.sh"
+source "$LIB_DIR/style.sh"
 
 # ============================================================================
 # Game Initialization
 # ============================================================================
+cd "$GAME_ROOT"  # Ensure we're in the game root directory
 load_progress
 load_pokedex
 

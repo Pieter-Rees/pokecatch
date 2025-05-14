@@ -32,7 +32,7 @@ throw_ball() {
     # Attempt to catch
     if [ $((RANDOM % 100)) -lt $CATCH_PROBABILITY ]; then
         print_success "Gotcha! The Monster was caught!"
-        catch_pocket_monster "$pocket_monster_NAME" $CATCH_PROBABILITY
+        catch_monster "$pocket_monster_NAME" $CATCH_PROBABILITY
         return 0
     else
         print_warning "Oh no! The Monster broke free!"
