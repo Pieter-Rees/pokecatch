@@ -68,10 +68,13 @@ buy_item() {
 
     if [ $MONEY -ge $ITEM_COST ]; then
         MONEY=$((MONEY - ITEM_COST))
+        if [ $MONEY -lt $MIN_MONEY ]; then
+            MONEY=$MIN_MONEY
+        fi
         INVENTORY["$ITEM_NAME"]=$((CURRENT_COUNT + 1))
         save_progress  # Save progress after buying an item
         print_success "You bought a $ITEM_NAME! You now have ${INVENTORY[$ITEM_NAME]} $ITEM_NAME(s)."
     else
-        print_error "You don't have enough money to buy $ITEM_NAME."
+        print_error "You don't have enough $CURRENCY_NAME to buy $ITEM_NAME."
     fi
 }

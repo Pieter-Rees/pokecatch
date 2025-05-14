@@ -1,0 +1,6 @@
+{
+    "starting_money": 1000,
+    "currency_name": "PokéDollars",
+    "min_money": 0,
+    "max_money": 999999
+} 

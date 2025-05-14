@@ -90,7 +90,12 @@ catch_monster() {
         if [[ $RANDOM_CATCH -lt $CATCH_PROBABILITY ]]; then
             print_success "Gotcha! The $MONSTER_NAME was caught!"
             add_to_pokedex "$MONSTER_NAME"
-            MONEY=$((MONEY + 100))
+            # Add reward money, respecting max money limit
+            local REWARD=100
+            MONEY=$((MONEY + REWARD))
+            if [ $MONEY -gt $MAX_MONEY ]; then
+                MONEY=$MAX_MONEY
+            fi
             return 0
         else
             print_warning "The Pokeball failed! Attempt #$THROW_ATTEMPT."

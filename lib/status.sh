@@ -6,6 +6,26 @@
 declare -A INVENTORY
 
 # ============================================================================
+# Configuration Loading
+# ============================================================================
+
+# Load game configuration
+load_config() {
+    if [[ -f "config/game_config.json" ]]; then
+        STARTING_MONEY=$(jq -r '.starting_money' config/game_config.json)
+        CURRENCY_NAME=$(jq -r '.currency_name' config/game_config.json)
+        MIN_MONEY=$(jq -r '.min_money' config/game_config.json)
+        MAX_MONEY=$(jq -r '.max_money' config/game_config.json)
+    else
+        # Default values if config file is missing
+        STARTING_MONEY=1000
+        CURRENCY_NAME="PokéDollars"
+        MIN_MONEY=0
+        MAX_MONEY=999999
+    fi
+}
+
+# ============================================================================
 # Save/Load Functions
 # ============================================================================
 
@@ -14,9 +34,14 @@ load_progress() {
     # Create data directory if it doesn't exist
     mkdir -p data
 
+    # Load configuration first
+    load_config
+
     if [[ -f "data/save.json" ]]; then
         # Load money
-        MONEY=$(jq -r '.money // 1000' data/save.json)
+        MONEY=$(jq -r --arg default "$STARTING_MONEY" '.money // $default' data/save.json)
+        MONEY=${MONEY:-$STARTING_MONEY}  # Ensure MONEY is set
+        MONEY=$((MONEY))  # Convert to number
         
         # Load inventory items
         if jq -e '.inventory' data/save.json >/dev/null 2>&1; then
@@ -27,7 +52,7 @@ load_progress() {
             done < <(jq -r '.inventory | to_entries | .[] | "\(.key)=\(.value)"' data/save.json)
         fi
     else
-        MONEY=1000
+        MONEY=$STARTING_MONEY
     fi
 }
 
@@ -119,4 +144,9 @@ show_pokedex() {
         echo -e "  $pocket_monster"
     done
     print_divider
+}
+
+# Print the current money amount
+print_money() {
+    echo -e "${GREEN}$MONEY $CURRENCY_NAME${NC}"
 }

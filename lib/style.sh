@@ -71,7 +71,7 @@ print_inventory_item() {
 
 # Print the current money amount
 print_money() {
-    echo -e "${GREEN}$MONEY Money: $MONEY${NC}"
+    echo -e "${GREEN}${MONEY} ${CURRENCY_NAME}${NC}"
 }
 
 # ============================================================================
