@@ -132,6 +132,9 @@ safari() {
                 
                 if [ $((RANDOM % 100)) -lt $FLEE_CHANCE ]; then
                     print_warning "The wild Monster fled!"
+                    # Increment fled counter
+                    ENCOUNTER_STATS["fled"]=$((ENCOUNTER_STATS["fled"] + 1))
+                    save_progress
                     MONSTER_ENCOUNTERED=false
                     MUD_THROWN="false"
                     BERRY_THROWN="false"
