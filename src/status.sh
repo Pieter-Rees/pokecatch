@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# ============================================================================
+# Save/Load Functions
+# ============================================================================
+
 # Load progress from save.json
 load_progress() {
     # Create data directory if it doesn't exist
@@ -34,6 +38,10 @@ save_progress() {
     }" > data/save.json
 }
 
+# ============================================================================
+# Pokédex Management
+# ============================================================================
+
 # Load Pokédex from pokedex.json
 load_pokedex() {
     # Create data directory if it doesn't exist
@@ -54,6 +62,10 @@ save_pokedex() {
     # Save the pokedex array into pokedex.json
     echo "{\"pokedex\": ${CAUGHT_POKEMON[@]}}" > data/pokedex.json
 }
+
+# ============================================================================
+# Status Display Functions
+# ============================================================================
 
 # Show current player status (Money, Caught Pokémon, Inventory)
 show_status() {

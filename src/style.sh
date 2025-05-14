@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Pokemon-themed colors
+# ============================================================================
+# Color Constants
+# ============================================================================
 RED='\033[0;31m'
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
@@ -9,7 +11,9 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Pokemon-themed icons
+# ============================================================================
+# Game Icons
+# ============================================================================
 POKEBALL="⚪"
 MONSTER="🐾"
 MONEY="💰"
@@ -21,14 +25,27 @@ POKEDEX="📱"
 STATUS="📊"
 EXIT="🚪"
 
-# Function to print a Pokemon-themed header
+# ============================================================================
+# UI Components
+# ============================================================================
+
+# Print the game header
 print_header() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║${NC}  ${MONSTER} ${YELLOW}Pokemon Safari Zone${NC} ${MONSTER}  ${BLUE}║${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 }
 
-# Function to print a menu option with icon
+# Print a horizontal divider
+print_divider() {
+    echo -e "${BLUE}──────────────────────────────────────────────────────────${NC}"
+}
+
+# ============================================================================
+# Menu and Option Display
+# ============================================================================
+
+# Print a menu option with icon and number
 print_menu_option() {
     local number=$1
     local icon=$2
@@ -36,34 +53,7 @@ print_menu_option() {
     echo -e "${CYAN}[${number}]${NC} ${icon} ${text}"
 }
 
-# Function to print a success message
-print_success() {
-    echo -e "${GREEN}✓ $1${NC}"
-}
-
-# Function to print an error message
-print_error() {
-    echo -e "${RED}✗ $1${NC}"
-}
-
-# Function to print a warning message
-print_warning() {
-    echo -e "${YELLOW}⚠ $1${NC}"
-}
-
-# Function to print Pokemon encounter
-print_pokemon_encounter() {
-    echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${PURPLE}║${NC}  ${MONSTER} A wild $1 appeared! ${MONSTER}  ${PURPLE}║${NC}"
-    echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
-}
-
-# Function to print a divider
-print_divider() {
-    echo -e "${BLUE}──────────────────────────────────────────────────────────${NC}"
-}
-
-# Function to print inventory item
+# Print an inventory item with its count
 print_inventory_item() {
     local item=$1
     local count=$2
@@ -79,12 +69,38 @@ print_inventory_item() {
     echo -e "${CYAN}$icon $item:${NC} $count"
 }
 
-# Function to print money
+# Print the current money amount
 print_money() {
     echo -e "${GREEN}$MONEY Money: $MONEY${NC}"
 }
 
-# Function to print a loading animation
+# ============================================================================
+# Status Messages
+# ============================================================================
+
+# Print a success message
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+# Print an error message
+print_error() {
+    echo -e "${RED}✗ $1${NC}"
+}
+
+# Print a warning message
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
+
+# Print a Pokemon encounter message
+print_pokemon_encounter() {
+    echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${PURPLE}║${NC}  ${MONSTER} A wild $1 appeared! ${MONSTER}  ${PURPLE}║${NC}"
+    echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+}
+
+# Print a loading animation
 print_loading() {
     local text=$1
     echo -ne "${CYAN}$text${NC} ["

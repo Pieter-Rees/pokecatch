@@ -1,17 +1,36 @@
 #!/bin/bash
 
-# Import necessary scripts
+# ============================================================================
+# Import Dependencies
+# ============================================================================
 source ./monster.sh
 source ./items.sh
 source ./status.sh
 source ./shop.sh
 source ./style.sh
 
-# Initialize game data
+# ============================================================================
+# Game Initialization
+# ============================================================================
 load_progress
 load_pokedex
 
-# Function to start the Safari Zone
+# ============================================================================
+# Game Functions
+# ============================================================================
+
+# Display current inventory items
+show_current_items() {
+    echo -e "${CYAN}Current Items:${NC}"
+    for item in "${!INVENTORY[@]}"; do
+        if [ "${INVENTORY[$item]}" -gt 0 ]; then
+            print_inventory_item "$item" "${INVENTORY[$item]}"
+        fi
+    done
+    print_divider
+}
+
+# Handle the Safari Zone gameplay
 safari() {
     local MONSTER_ENCOUNTERED=false
     local MONSTER_ANGRY=false
@@ -122,18 +141,9 @@ safari() {
     done
 }
 
-# Function to display current items
-show_current_items() {
-    echo -e "${CYAN}Current Items:${NC}"
-    for item in "${!INVENTORY[@]}"; do
-        if [ "${INVENTORY[$item]}" -gt 0 ]; then
-            print_inventory_item "$item" "${INVENTORY[$item]}"
-        fi
-    done
-    print_divider
-}
-
+# ============================================================================
 # Main Game Loop
+# ============================================================================
 while true; do
     print_header
     print_money

@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# Fetch a random Monster
+# ============================================================================
+# Monster Encounter Functions
+# ============================================================================
+
+# Fetch and display a random Monster from the PokeAPI
 get_random_monster() {
     MONSTER_ID=$(shuf -i 1-898 -n 1)
     local MAX_RETRIES=3
@@ -17,31 +21,7 @@ get_random_monster() {
             MONSTER_IMAGE_URL=$(echo "$RESPONSE" | jq -r '.sprites.front_default // empty')
 
             if [[ -n "$MONSTER_NAME" && -n "$MONSTER_IMAGE_URL" ]]; then
-                # Create a temporary directory for images if it doesn't exist
-                mkdir -p /tmp/monster_images
-                
-                # Download and display the Monster image
-                TEMP_IMAGE="/tmp/monster_images/${MONSTER_NAME}.png"
-                if curl -s -o "$TEMP_IMAGE" "$MONSTER_IMAGE_URL"; then
-                    if command -v catimg >/dev/null 2>&1; then
-                        # Clear the screen for a better presentation
-                        clear
-                        print_header
-                        print_divider
-                        # Center the Monster image
-                        echo
-                        catimg -w 40 "$TEMP_IMAGE" | sed 's/^/    /'
-                        echo
-                        print_divider
-                        # Capitalize first letter of Monster name
-                        MONSTER_NAME=$(echo "$MONSTER_NAME" | sed 's/^./\U&/')
-                        print_monster_encounter "$MONSTER_NAME"
-                        print_divider
-                    else
-                        print_warning "Note: Install 'catimg' to see Monster sprites"
-                        print_monster_encounter "$MONSTER_NAME"
-                    fi
-                fi
+                display_monster "$MONSTER_NAME" "$MONSTER_IMAGE_URL"
                 return 0
             fi
         fi
@@ -58,7 +38,43 @@ get_random_monster() {
     return 1
 }
 
-# Catch the Monster
+# Display the Monster image and encounter message
+display_monster() {
+    local MONSTER_NAME=$1
+    local MONSTER_IMAGE_URL=$2
+
+    # Create a temporary directory for images if it doesn't exist
+    mkdir -p /tmp/monster_images
+    
+    # Download and display the Monster image
+    TEMP_IMAGE="/tmp/monster_images/${MONSTER_NAME}.png"
+    if curl -s -o "$TEMP_IMAGE" "$MONSTER_IMAGE_URL"; then
+        if command -v catimg >/dev/null 2>&1; then
+            # Clear the screen for a better presentation
+            clear
+            print_header
+            print_divider
+            # Center the Monster image
+            echo
+            catimg -w 40 "$TEMP_IMAGE" | sed 's/^/    /'
+            echo
+            print_divider
+            # Capitalize first letter of Monster name
+            MONSTER_NAME=$(echo "$MONSTER_NAME" | sed 's/^./\U&/')
+            print_monster_encounter "$MONSTER_NAME"
+            print_divider
+        else
+            print_warning "Note: Install 'catimg' to see Monster sprites"
+            print_monster_encounter "$MONSTER_NAME"
+        fi
+    fi
+}
+
+# ============================================================================
+# Monster Capture Functions
+# ============================================================================
+
+# Attempt to catch the Monster with a Pokeball
 catch_monster() {
     local MONSTER_NAME=$1
     local CATCH_PROBABILITY=$2
@@ -85,7 +101,11 @@ catch_monster() {
     return 1
 }
 
-# Add Monster to Pokédex
+# ============================================================================
+# Pokédex Management
+# ============================================================================
+
+# Add a caught Monster to the Pokédex
 add_to_pokedex() {
     local MONSTER_NAME=$1
     
