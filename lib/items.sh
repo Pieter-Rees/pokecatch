@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# ============================================================================
+# Item Usage Functions
+# ============================================================================
+
 # Throw a Safari Ball to catch Monster
 throw_ball() {
+    # Check if player has Pokeballs
     if [[ ${INVENTORY["Pokeball"]} -le 0 ]]; then
         print_error "You don't have any Pokeballs left!"
         return 2  # Special return code for no Pokeballs
@@ -10,10 +15,10 @@ throw_ball() {
     # Decrease ball count
     INVENTORY["Pokeball"]=$((INVENTORY["Pokeball"] - 1))
     
-    # Base catch rate (from original games)
-    local CATCH_RATE=30
+    # Calculate catch probability
+    local CATCH_RATE=30  # Base catch rate (from original games)
     
-    # Modify catch rate based on status
+    # Modify catch rate based on Monster's status
     if [[ "$POKEMON_EATING" == "true" ]]; then
         CATCH_RATE=$((CATCH_RATE * 2))  # Double catch rate when eating
     elif [[ "$POKEMON_ANGRY" == "true" ]]; then
@@ -36,6 +41,7 @@ throw_ball() {
 
 # Throw a Berry to make the Monster eat
 throw_berry() {
+    # Check if player has Berries
     if [[ ${INVENTORY["Berry"]} -le 0 ]]; then
         print_error "You don't have any Berries left!"
         return 1
@@ -52,6 +58,7 @@ throw_berry() {
 
 # Throw Mud to make the Monster angry
 throw_mud() {
+    # Check if player has Mud
     if [[ ${INVENTORY["Mud"]} -le 0 ]]; then
         print_error "You don't have any Mud left!"
         return 1

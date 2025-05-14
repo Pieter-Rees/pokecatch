@@ -1,10 +1,18 @@
 #!/bin/bash
 
+# ============================================================================
+# Shop Configuration
+# ============================================================================
+
 # Shop items and their costs
 ITEMS=("Pokeball" "Berry" "Mud")
 ITEM_COSTS=(200 100 50)
 
-# Function to display the shop menu
+# ============================================================================
+# Shop Display Functions
+# ============================================================================
+
+# Display the shop menu and handle purchases
 show_shop() {
     print_header
     print_money
@@ -37,7 +45,7 @@ show_shop() {
     esac
 }
 
-# Function to get item icon
+# Get the icon for a specific item
 get_item_icon() {
     local item=$1
     case $item in
@@ -48,7 +56,11 @@ get_item_icon() {
     esac
 }
 
-# Function to buy an item
+# ============================================================================
+# Purchase Functions
+# ============================================================================
+
+# Buy an item from the shop
 buy_item() {
     local ITEM_NAME=$1
     local ITEM_COST=$2
