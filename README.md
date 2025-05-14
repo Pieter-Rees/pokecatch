@@ -13,7 +13,7 @@ A fun command-line Pokémon Safari Zone simulator with a beautiful terminal inte
 - 🎯 Catching mechanics with real catch rate formula
 - 🍓 Bait and mud affect Pokémon behavior (just like Safari Zone)
 - 🏃 Fleeing logic based on stats
-- 📦 Collection is saved locally in `pokedex.json`
+- 📦 Collection is saved locally in `data/pokedex.json`
 - 📖 Built-in Pokédex viewer
 - 🎨 Beautiful terminal UI with:
   - Colorful headers and borders
@@ -49,14 +49,35 @@ git clone https://github.com/yourusername/pokecatch.git
 cd pokecatch
 ```
 
-2. Make the game executable:
+2. Install the game:
 ```bash
-chmod +x src/game.sh
+sudo make install
 ```
 
 3. Run the game:
 ```bash
-./src/game.sh
+pokecatch
+```
+
+## 📁 Project Structure
+
+```
+pokecatch/
+├── bin/            # Executable scripts
+│   └── pokecatch   # Main game script
+├── lib/            # Library functions
+│   ├── monster.sh  # Pokémon-related functions
+│   ├── items.sh    # Item management
+│   ├── shop.sh     # Shop functionality
+│   ├── status.sh   # Status display
+│   └── style.sh    # UI styling
+├── data/           # Data files
+│   ├── pokedex.json
+│   └── save.json
+├── config/         # Configuration files
+├── tests/          # Test files
+├── Makefile        # Build and installation
+└── README.md
 ```
 
 ## 🎯 How to Play

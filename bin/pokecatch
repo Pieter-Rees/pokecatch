@@ -3,11 +3,11 @@
 # ============================================================================
 # Import Dependencies
 # ============================================================================
-source ./monster.sh
-source ./items.sh
-source ./status.sh
-source ./shop.sh
-source ./style.sh
+source "/usr/local/lib/pokecatch/monster.sh"
+source "/usr/local/lib/pokecatch/items.sh"
+source "/usr/local/lib/pokecatch/status.sh"
+source "/usr/local/lib/pokecatch/shop.sh"
+source "/usr/local/lib/pokecatch/style.sh"
 
 # ============================================================================
 # Game Initialization
