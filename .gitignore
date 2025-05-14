@@ -1,5 +1,33 @@
-# Ignore temporary image files
-/tmp/pokemon_image.*
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+*.swp
+*~
 
-# Ignore pokedex if user doesn't want to commit progress
-pokedex.json
+# User data and save files
+data/pokedex.json
+data/save.json
+*.save
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+
+# Build artifacts
+*.o
+*.so
+*.a
+*.out
+
+# IDE and editor files
+.idea/
+.vscode/
+*.sublime-*
+*.code-workspace
+
+# Local configuration
+.env
+config.local.sh
