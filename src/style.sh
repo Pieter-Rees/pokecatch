@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 # Pokemon-themed icons
 POKEBALL="⚪"
-POKEMON="🐾"
+MONSTER="🐾"
 MONEY="💰"
 BERRY="🍓"
 MUD="💩"
@@ -24,7 +24,7 @@ EXIT="🚪"
 # Function to print a Pokemon-themed header
 print_header() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║${NC}  ${POKEMON} ${YELLOW}Pokemon Safari Zone${NC} ${POKEMON}  ${BLUE}║${NC}"
+    echo -e "${BLUE}║${NC}  ${MONSTER} ${YELLOW}Pokemon Safari Zone${NC} ${MONSTER}  ${BLUE}║${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 }
 
@@ -54,7 +54,7 @@ print_warning() {
 # Function to print Pokemon encounter
 print_pokemon_encounter() {
     echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${PURPLE}║${NC}  ${POKEMON} A wild $1 appeared! ${POKEMON}  ${PURPLE}║${NC}"
+    echo -e "${PURPLE}║${NC}  ${MONSTER} A wild $1 appeared! ${MONSTER}  ${PURPLE}║${NC}"
     echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
 }
 

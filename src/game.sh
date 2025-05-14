@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Import necessary scripts
-source ./pokemon.sh
+source ./monster.sh
 source ./items.sh
 source ./status.sh
 source ./shop.sh
@@ -13,26 +13,26 @@ load_pokedex
 
 # Function to start the Safari Zone
 safari() {
-    local POKEMON_ENCOUNTERED=false
-    local POKEMON_ANGRY=false
-    local POKEMON_EATING=false
+    local MONSTER_ENCOUNTERED=false
+    local MONSTER_ANGRY=false
+    local MONSTER_EATING=false
     
     while true; do
-        if [ "$POKEMON_ENCOUNTERED" = false ]; then
+        if [ "$MONSTER_ENCOUNTERED" = false ]; then
             print_header
-            print_menu_option "1" "$SAFARI" "Look for Pokémon"
+            print_menu_option "1" "$SAFARI" "Look for Monster"
             print_menu_option "2" "$EXIT" "Go Back"
             read -p "What will you do? " SAFARI_CHOICE
             
             case $SAFARI_CHOICE in
                 1)
-                    print_loading "Searching for Pokémon"
-                    # 30% chance to encounter a Pokémon
+                    print_loading "Searching for Monster"
+                    # 30% chance to encounter a Monster
                     if [ $((RANDOM % 100)) -lt 30 ]; then
-                        POKEMON_ENCOUNTERED=true
-                        get_random_pokemon
+                        MONSTER_ENCOUNTERED=true
+                        get_random_monster
                     else
-                        print_warning "You search the area but find no Pokémon..."
+                        print_warning "You search the area but find no Monster..."
                     fi
                     ;;
                 2)
@@ -56,9 +56,9 @@ safari() {
                     throw_ball
                     local BALL_RESULT=$?
                     if [ $BALL_RESULT -eq 0 ]; then
-                        POKEMON_ENCOUNTERED=false
+                        MONSTER_ENCOUNTERED=false
                     elif [ $BALL_RESULT -eq 2 ]; then
-                        print_warning "You need Pokeballs to catch Pokémon! Visit the shop to buy some."
+                        print_warning "You need Pokeballs to catch Monster! Visit the shop to buy some."
                         print_menu_option "1" "$SHOP" "Go to Shop"
                         print_menu_option "2" "$EXIT" "Stay Here"
                         read -p "What will you do? " SHOP_CHOICE
@@ -67,7 +67,7 @@ safari() {
                                 show_shop
                                 ;;
                             2)
-                                print_success "You decide to stay and observe the Pokémon."
+                                print_success "You decide to stay and observe the Monster."
                                 ;;
                             *)
                                 print_error "Invalid choice. Staying here."
@@ -77,17 +77,17 @@ safari() {
                     ;;
                 2)
                     throw_berry
-                    POKEMON_EATING=true
-                    POKEMON_ANGRY=false
+                    MONSTER_EATING=true
+                    MONSTER_ANGRY=false
                     ;;
                 3)
                     throw_mud
-                    POKEMON_ANGRY=true
-                    POKEMON_EATING=false
+                    MONSTER_ANGRY=true
+                    MONSTER_EATING=false
                     ;;
                 4)
-                    print_warning "You ran away from the wild Pokémon."
-                    POKEMON_ENCOUNTERED=false
+                    print_warning "You ran away from the wild Monster."
+                    MONSTER_ENCOUNTERED=false
                     MUD_THROWN="false"
                     BERRY_THROWN="false"
                     ;;
@@ -96,24 +96,24 @@ safari() {
                     ;;
             esac
             
-            # Check if Pokémon flees (higher chance if angry, lower if eating)
-            if [ "$POKEMON_ENCOUNTERED" = true ]; then
-                # Don't let Pokemon flee if player has no Pokeballs
+            # Check if Monster flees (higher chance if angry, lower if eating)
+            if [ "$MONSTER_ENCOUNTERED" = true ]; then
+                # Don't let Monster flee if player has no Pokeballs
                 if [[ ${INVENTORY["Pokeball"]} -le 0 ]]; then
-                    print_warning "The Pokémon seems to be waiting for you to get some Pokeballs..."
+                    print_warning "The Monster seems to be waiting for you to get some Pokeballs..."
                     continue
                 fi
 
                 local FLEE_CHANCE=20
-                if [ "$POKEMON_ANGRY" = true ]; then
+                if [ "$MONSTER_ANGRY" = true ]; then
                     FLEE_CHANCE=40
-                elif [ "$POKEMON_EATING" = true ]; then
+                elif [ "$MONSTER_EATING" = true ]; then
                     FLEE_CHANCE=10
                 fi
                 
                 if [ $((RANDOM % 100)) -lt $FLEE_CHANCE ]; then
-                    print_warning "The wild Pokémon fled!"
-                    POKEMON_ENCOUNTERED=false
+                    print_warning "The wild Monster fled!"
+                    MONSTER_ENCOUNTERED=false
                     MUD_THROWN="false"
                     BERRY_THROWN="false"
                 fi
