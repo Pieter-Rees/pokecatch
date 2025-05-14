@@ -12,6 +12,8 @@ install:
 	@mkdir -p data
 	@echo '{"pokedex": [], "monster_stats": {}}' > data/pokedex.json
 	@echo '{"money": 1000, "inventory": {}, "encounter_stats": {}}' > data/save.json
+	@chmod 755 data
+	@chmod 644 data/*.json
 	@cp bin/pokecatch $(DESTDIR)/usr/local/bin/
 	@cp lib/*.sh $(DESTDIR)/usr/local/lib/pokecatch/
 	@cp data/*.json $(DESTDIR)/usr/local/share/pokecatch/

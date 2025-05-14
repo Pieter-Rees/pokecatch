@@ -2,7 +2,11 @@
 
 A fun command-line Pocket Monster Safari Zone simulator with a beautiful terminal interface. Explore, encounter wild Pocket Monsters, throw Safari Balls, use bait or mud, and catch 'em all – all from your terminal!
 
-![screenshot](assets/screenshot.png) <!-- optional if you add one -->
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/yourusername/pokecatch/actions)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yourusername/pokecatch/releases)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+![screenshot](assets/screenshot.png)
 
 ---
 
@@ -98,6 +102,59 @@ The game uses ANSI colors and Unicode characters for its interface. Make sure yo
 - Supports ANSI color codes
 - Uses UTF-8 encoding
 - Can display Unicode characters (for icons and emojis)
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+make test
+```
+
+The tests cover:
+- Core game mechanics
+- Pocket Monster encounter rates
+- Catch rate calculations
+- Item effects
+- Save/load functionality
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how you can help:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure your code follows the project's style guidelines and includes appropriate tests.
+
+## 🔧 Troubleshooting
+
+Common issues and solutions:
+
+### Image Display Issues
+- If Pocket Monster sprites aren't displaying:
+  - Ensure `catimg` is properly installed
+  - Check terminal color support: `echo -e "\e[31mRed Text\e[0m"`
+  - Verify terminal size is sufficient
+
+### Game Won't Start
+- Check all dependencies are installed
+- Verify file permissions: `chmod +x bin/pokecatch`
+- Ensure data directory exists: `mkdir -p data`
+
+### Save File Issues
+- If save data is corrupted:
+  - Backup and remove `data/save.json`
+  - Restart the game to create a new save file
+
+## 📚 Documentation
+
+For detailed documentation about game mechanics and development:
+- [Game Mechanics](docs/mechanics.md)
+- [Development Guide](docs/development.md)
+- [API Reference](docs/api.md)
 
 ## 📝 License
 
