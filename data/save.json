@@ -1,6 +1,12 @@
 {
-  "money": 800,
+  "money": 400,
   "inventory": {
-    "Pokeball": 1
+    "Pokeball": 0
+  },
+  "encounter_stats": {
+    "total_encounters": 3,
+    "failed_catches": 0,
+    "successful_catches": 0,
+    "fled": 0
   }
 }

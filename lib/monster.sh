@@ -16,12 +16,16 @@ get_random_monster() {
         
         # Check if the response is valid JSON
         if echo "$RESPONSE" | jq empty 2>/dev/null; then
-            # Extract Monster name and image URL with error handling
+            # Extract Monster name, image URL, and stats with error handling
             MONSTER_NAME=$(echo "$RESPONSE" | jq -r '.name // empty')
             MONSTER_IMAGE_URL=$(echo "$RESPONSE" | jq -r '.sprites.front_default // empty')
+            MONSTER_STATS=$(echo "$RESPONSE" | jq -r '.stats[] | "\(.stat.name): \(.base_stat)"' | tr '\n' '|')
 
             if [[ -n "$MONSTER_NAME" && -n "$MONSTER_IMAGE_URL" ]]; then
-                display_monster "$MONSTER_NAME" "$MONSTER_IMAGE_URL"
+                # Increment total encounters
+                ENCOUNTER_STATS["total_encounters"]=$((ENCOUNTER_STATS["total_encounters"] + 1))
+                save_progress
+                display_monster "$MONSTER_NAME" "$MONSTER_IMAGE_URL" "$MONSTER_STATS"
                 return 0
             fi
         fi
@@ -42,6 +46,7 @@ get_random_monster() {
 display_monster() {
     local MONSTER_NAME=$1
     local MONSTER_IMAGE_URL=$2
+    local MONSTER_STATS=$3
 
     # Create a temporary directory for images if it doesn't exist
     mkdir -p /tmp/monster_images
@@ -61,11 +66,20 @@ display_monster() {
             print_divider
             # Capitalize first letter of Monster name
             MONSTER_NAME=$(echo "$MONSTER_NAME" | sed 's/^./\U&/')
-            print_monster_encounter "$MONSTER_NAME"
+            print_pocket_monster_encounter "$MONSTER_NAME"
+            
+            # Display Monster stats
+            echo -e "${CYAN}Stats:${NC}"
+            echo "$MONSTER_STATS" | tr '|' '\n' | while IFS=':' read -r stat_name stat_value; do
+                # Capitalize and format stat name
+                stat_name=$(echo "$stat_name" | sed 's/^./\U&/')
+                echo -e "  ${YELLOW}$stat_name${NC}: $stat_value"
+            done
+            
             print_divider
         else
             print_warning "Note: Install 'catimg' to see Monster sprites"
-            print_monster_encounter "$MONSTER_NAME"
+            print_pocket_monster_encounter "$MONSTER_NAME"
         fi
     fi
 }
@@ -89,7 +103,10 @@ catch_monster() {
 
         if [[ $RANDOM_CATCH -lt $CATCH_PROBABILITY ]]; then
             print_success "Gotcha! The $MONSTER_NAME was caught!"
-            add_to_pokedex "$MONSTER_NAME"
+            add_to_pokedex "$MONSTER_NAME" "$MONSTER_STATS"
+            # Increment successful catches
+            ENCOUNTER_STATS["successful_catches"]=$((ENCOUNTER_STATS["successful_catches"] + 1))
+            save_progress
             # Add reward money, respecting max money limit
             local REWARD=100
             MONEY=$((MONEY + REWARD))
@@ -99,6 +116,9 @@ catch_monster() {
             return 0
         else
             print_warning "The Pokeball failed! Attempt #$THROW_ATTEMPT."
+            # Increment failed catches
+            ENCOUNTER_STATS["failed_catches"]=$((ENCOUNTER_STATS["failed_catches"] + 1))
+            save_progress
         fi
     done
 
@@ -113,10 +133,44 @@ catch_monster() {
 # Add a caught Monster to the Pokédex
 add_to_pokedex() {
     local MONSTER_NAME=$1
+    local MONSTER_STATS=$2
     
     # Check if Monster is already in Pokédex
     if [[ ! " ${CAUGHT_MONSTER[@]} " =~ " ${MONSTER_NAME} " ]]; then
         CAUGHT_MONSTER+=("$MONSTER_NAME")
+        # Save stats to a separate array
+        MONSTER_STATS_ARRAY["$MONSTER_NAME"]="$MONSTER_STATS"
         save_pokedex
     fi
+}
+
+# Show the Pokédex
+show_pokedex() {
+    print_header
+    print_divider
+    echo -e "${CYAN}Your Pokédex:${NC}"
+    
+    if [ ${#CAUGHT_MONSTER[@]} -eq 0 ]; then
+        print_warning "Your Pokédex is empty. Go catch some Monsters!"
+    else
+        for monster in "${CAUGHT_MONSTER[@]}"; do
+            print_divider
+            # Capitalize first letter of Monster name
+            monster_name=$(echo "$monster" | sed 's/^./\U&/')
+            echo -e "${YELLOW}$monster_name${NC}"
+            
+            # Display stats if available
+            if [[ -n "${MONSTER_STATS_ARRAY[$monster]}" ]]; then
+                echo -e "${CYAN}Stats:${NC}"
+                echo "${MONSTER_STATS_ARRAY[$monster]}" | tr '|' '\n' | while IFS=':' read -r stat_name stat_value; do
+                    # Capitalize and format stat name
+                    stat_name=$(echo "$stat_name" | sed 's/^./\U&/')
+                    echo -e "  ${YELLOW}$stat_name${NC}: $stat_value"
+                done
+            fi
+        done
+    fi
+    
+    print_divider
+    read -p "Press Enter to continue..."
 }
