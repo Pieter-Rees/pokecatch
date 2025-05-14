@@ -14,35 +14,36 @@ ITEM_COSTS=(200 100 50)
 
 # Display the shop menu and handle purchases
 show_shop() {
-    print_header
-    print_money
-    print_divider
-    echo -e "${CYAN}Available items for sale:${NC}"
-    for i in "${!ITEMS[@]}"; do
-        print_menu_option "$((i+1))" "$(get_item_icon "${ITEMS[$i]}")" "${ITEMS[$i]} - \$${ITEM_COSTS[$i]}"
-    done
-    print_menu_option "0" "$EXIT" "Leave Shop"
-    read -p "What would you like to buy? " CHOICE
+    while true; do
+        print_header
+        print_money
+        print_divider
+        echo -e "${CYAN}Available items for sale:${NC}"
+        for i in "${!ITEMS[@]}"; do
+            print_menu_option "$((i+1))" "$(get_item_icon "${ITEMS[$i]}")" "${ITEMS[$i]} - \$${ITEM_COSTS[$i]}"
+        done
+        print_menu_option "0" "$BACK" "Return to Main Menu"
+        read -p "What would you like to buy? " CHOICE
 
-    case $CHOICE in
-        1)
-            buy_item "Pokeball" 200
-            ;;
-        2)
-            buy_item "Berry" 100
-            ;;
-        3)
-            buy_item "Mud" 50
-            ;;
-        0)
-            print_success "Leaving the shop..."
-            return
-            ;;
-        *)
-            print_error "Invalid option. Try again."
-            show_shop
-            ;;
-    esac
+        case $CHOICE in
+            1)
+                buy_item "Pokeball" 200
+                ;;
+            2)
+                buy_item "Berry" 100
+                ;;
+            3)
+                buy_item "Mud" 50
+                ;;
+            0)
+                print_success "Leaving the shop..."
+                return
+                ;;
+            *)
+                print_error "Invalid option. Try again."
+                ;;
+        esac
+    done
 }
 
 # Get the icon for a specific item

@@ -52,7 +52,7 @@ safari() {
         if [ "$MONSTER_ENCOUNTERED" = false ]; then
             print_header
             print_menu_option "1" "$SAFARI" "Look for Monster"
-            print_menu_option "2" "$EXIT" "Go Back"
+            print_menu_option "0" "$BACK" "Return to Main Menu"
             read -p "What will you do? " SAFARI_CHOICE
             
             case $SAFARI_CHOICE in
@@ -66,7 +66,7 @@ safari() {
                         print_warning "You search the area but find no Monster..."
                     fi
                     ;;
-                2)
+                0)
                     print_success "You decide to go back to the main area."
                     return
                     ;;
@@ -79,7 +79,7 @@ safari() {
             print_menu_option "1" "$POKEBALL" "Throw Pokeball"
             print_menu_option "2" "$BERRY" "Throw Berry"
             print_menu_option "3" "$MUD" "Throw Mud"
-            print_menu_option "4" "$EXIT" "Run Away"
+            print_menu_option "0" "$BACK" "Run Away"
             read -p "What will you do? " SAFARI_CHOICE
 
             case $SAFARI_CHOICE in
@@ -91,13 +91,18 @@ safari() {
                     elif [ $BALL_RESULT -eq 2 ]; then
                         print_warning "You need Pokeballs to catch Monster! Visit the shop to buy some."
                         print_menu_option "1" "$SHOP" "Go to Shop"
-                        print_menu_option "2" "$EXIT" "Stay Here"
+                        print_menu_option "0" "$BACK" "Stay Here"
                         read -p "What will you do? " SHOP_CHOICE
                         case $SHOP_CHOICE in
                             1)
                                 show_shop
+                                # Return to monster encounter after shop
+                                if [[ ${INVENTORY["Pokeball"]} -gt 0 ]]; then
+                                    print_success "You return to the monster encounter with your new Pokeballs!"
+                                    continue
+                                fi
                                 ;;
-                            2)
+                            0)
                                 print_success "You decide to stay and observe the Monster."
                                 ;;
                             *)
@@ -116,7 +121,7 @@ safari() {
                     MONSTER_ANGRY=true
                     MONSTER_EATING=false
                     ;;
-                4)
+                0)
                     print_warning "You ran away from the wild Monster."
                     MONSTER_ENCOUNTERED=false
                     MUD_THROWN="false"
@@ -168,7 +173,7 @@ while true; do
     print_menu_option "2" "$POKEDEX" "View Pokédex"
     print_menu_option "3" "$STATUS" "Check Status"
     print_menu_option "4" "$SHOP" "Visit Shop"
-    print_menu_option "5" "$EXIT" "Exit Game"
+    print_menu_option "0" "$EXIT" "Exit Game"
     read -p "What will you do? " CHOICE
 
     case $CHOICE in
@@ -184,7 +189,7 @@ while true; do
         4)
             show_shop  # Visit the shop
             ;;
-        5)
+        0)
             print_success "Exiting the game. Goodbye!"
             save_progress  # Save game progress
             save_pokedex  # Save the Pokédex data

@@ -24,6 +24,8 @@ SAFARI="🌴"
 POKEDEX="📱"
 STATUS="📊"
 EXIT="🚪"
+SEARCH="🔍"
+BACK="⬅️"
 
 # ============================================================================
 # UI Components
@@ -105,7 +107,7 @@ print_loading() {
     local text=$1
     echo -ne "${CYAN}$text${NC} ["
     for i in {1..3}; do
-        echo -ne "${YELLOW}${POKEBALL}${NC}"
+        echo -ne " "
         sleep 0.3
         echo -ne "\b"
     done

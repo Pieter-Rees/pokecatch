@@ -19,12 +19,15 @@ get_random_monster() {
             # Extract Monster name, image URL, and stats with error handling
             MONSTER_NAME=$(echo "$RESPONSE" | jq -r '.name // empty')
             MONSTER_IMAGE_URL=$(echo "$RESPONSE" | jq -r '.sprites.front_default // empty')
+            # Store stats in a more reliable format
             MONSTER_STATS=$(echo "$RESPONSE" | jq -r '.stats[] | "\(.stat.name): \(.base_stat)"' | tr '\n' '|')
 
-            if [[ -n "$MONSTER_NAME" && -n "$MONSTER_IMAGE_URL" ]]; then
+            if [[ -n "$MONSTER_NAME" && -n "$MONSTER_IMAGE_URL" && -n "$MONSTER_STATS" ]]; then
                 # Increment total encounters
                 ENCOUNTER_STATS["total_encounters"]=$((ENCOUNTER_STATS["total_encounters"] + 1))
                 save_progress
+                # Export MONSTER_STATS to make it available to child processes
+                export MONSTER_STATS
                 display_monster "$MONSTER_NAME" "$MONSTER_IMAGE_URL" "$MONSTER_STATS"
                 return 0
             fi
@@ -44,9 +47,9 @@ get_random_monster() {
 
 # Display the Monster image and encounter message
 display_monster() {
-    local MONSTER_NAME=$1
-    local MONSTER_IMAGE_URL=$2
-    local MONSTER_STATS=$3
+    MONSTER_NAME=$1
+    MONSTER_IMAGE_URL=$2
+    MONSTER_STATS=$3
 
     # Create a temporary directory for images if it doesn't exist
     mkdir -p /tmp/monster_images
@@ -92,38 +95,37 @@ display_monster() {
 catch_monster() {
     local MONSTER_NAME=$1
     local CATCH_PROBABILITY=$2
-    local THROW_ATTEMPT=0
-    local MAX_ATTEMPTS=3
+    local THROW_ATTEMPT=$3  # Now passed from throw_ball
 
-    while [ $THROW_ATTEMPT -lt $MAX_ATTEMPTS ]; do
-        THROW_ATTEMPT=$((THROW_ATTEMPT + 1))
-        RANDOM_CATCH=$((RANDOM % 100))
+    RANDOM_CATCH=$((RANDOM % 100))
+    print_loading "Throwing the Pokeball"
 
-        print_loading "Throwing the Pokeball"
-
-        if [[ $RANDOM_CATCH -lt $CATCH_PROBABILITY ]]; then
-            print_success "Gotcha! The $MONSTER_NAME was caught!"
-            add_to_pokedex "$MONSTER_NAME" "$MONSTER_STATS"
-            # Increment successful catches
-            ENCOUNTER_STATS["successful_catches"]=$((ENCOUNTER_STATS["successful_catches"] + 1))
-            save_progress
-            # Add reward money, respecting max money limit
-            local REWARD=100
-            MONEY=$((MONEY + REWARD))
-            if [ $MONEY -gt $MAX_MONEY ]; then
-                MONEY=$MAX_MONEY
-            fi
-            return 0
-        else
-            print_warning "The Pokeball failed! Attempt #$THROW_ATTEMPT."
-            # Increment failed catches
-            ENCOUNTER_STATS["failed_catches"]=$((ENCOUNTER_STATS["failed_catches"] + 1))
-            save_progress
+    if [[ $RANDOM_CATCH -lt $CATCH_PROBABILITY ]]; then
+        # Ensure MONSTER_STATS is available
+        if [[ -z "$MONSTER_STATS" ]]; then
+            print_warning "No stats available for $MONSTER_NAME"
+            return 1
         fi
-    done
-
-    print_error "The $MONSTER_NAME escaped!"
-    return 1
+        # Pass the stats to add_to_pokedex
+        add_to_pokedex "$MONSTER_NAME" "$MONSTER_STATS"
+        # Increment successful catches
+        ENCOUNTER_STATS["successful_catches"]=$((ENCOUNTER_STATS["successful_catches"] + 1))
+        save_progress
+        # Add reward money, respecting max money limit
+        local REWARD=100
+        MONEY=$((MONEY + REWARD))
+        if [ $MONEY -gt $MAX_MONEY ]; then
+            MONEY=$MAX_MONEY
+        fi
+        save_progress  # Save after adding money
+        return 0  # Return success
+    else
+        print_warning "The Pokeball failed! Attempt #$THROW_ATTEMPT."
+        # Increment failed catches
+        ENCOUNTER_STATS["failed_catches"]=$((ENCOUNTER_STATS["failed_catches"] + 1))
+        save_progress
+        return 1
+    fi
 }
 
 # ============================================================================
@@ -139,7 +141,11 @@ add_to_pokedex() {
     if [[ ! " ${CAUGHT_MONSTER[@]} " =~ " ${MONSTER_NAME} " ]]; then
         CAUGHT_MONSTER+=("$MONSTER_NAME")
         # Save stats to a separate array
-        MONSTER_STATS_ARRAY["$MONSTER_NAME"]="$MONSTER_STATS"
-        save_pokedex
+        if [[ -n "$MONSTER_STATS" ]]; then
+            MONSTER_STATS_ARRAY["$MONSTER_NAME"]="$MONSTER_STATS"
+            save_pokedex
+        else
+            print_warning "No stats available for $MONSTER_NAME"
+        fi
     fi
 }
