@@ -64,8 +64,8 @@ safari() {
             esac
         else
             print_divider
-            print_menu_option "1" "$POKEBALL" "Throw a Ball"
-            print_menu_option "2" "$BERRY" "Throw a Berry"
+            print_menu_option "1" "$POKEBALL" "Throw Pokeball"
+            print_menu_option "2" "$BERRY" "Throw Berry"
             print_menu_option "3" "$MUD" "Throw Mud"
             print_menu_option "4" "$EXIT" "Run Away"
             read -p "What will you do? " SAFARI_CHOICE

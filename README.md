@@ -1,6 +1,6 @@
-# 🐾 Pokémon Safari Zone - Terminal Edition
+# 🐾 Pocket Monster Safari Zone - Terminal Edition
 
-A fun command-line Pokémon Safari Zone simulator with a beautiful terminal interface. Explore, encounter wild Pokémon, throw Safari Balls, use bait or mud, and catch 'em all – all from your terminal!
+A fun command-line Pocket Monster Safari Zone simulator with a beautiful terminal interface. Explore, encounter wild Pocket Monsters, throw Safari Balls, use bait or mud, and catch 'em all – all from your terminal!
 
 ![screenshot](assets/screenshot.png) <!-- optional if you add one -->
 
@@ -8,16 +8,16 @@ A fun command-line Pokémon Safari Zone simulator with a beautiful terminal inte
 
 ## 🎮 Features
 
-- 🎲 Random wild Pokémon encounters (up to Gen 8)
-- 🖼 16-bit Pokémon sprites shown in terminal (via `catimg`)
+- 🎲 Random wild Pocket Monster encounters (up to Gen 8)
+- 🖼 16-bit Pocket Monster sprites shown in terminal (via `catimg`)
 - 🎯 Catching mechanics with real catch rate formula
-- 🍓 Bait and mud affect Pokémon behavior (just like Safari Zone)
+- 🍓 Bait and mud affect Pocket Monster behavior (just like Safari Zone)
 - 🏃 Fleeing logic based on stats
 - 📦 Collection is saved locally in `data/pokedex.json`
-- 📖 Built-in Pokédex viewer
+- 📖 Built-in Pocket Monster viewer
 - 🎨 Beautiful terminal UI with:
   - Colorful headers and borders
-  - Pokémon-themed icons and emojis
+  - Pocket Monster-themed icons and emojis
   - Loading animations
   - Clear visual hierarchy
   - Status indicators
@@ -66,7 +66,7 @@ pokecatch/
 ├── bin/            # Executable scripts
 │   └── pokecatch   # Main game script
 ├── lib/            # Library functions
-│   ├── monster.sh  # Pokémon-related functions
+│   ├── monster.sh  # Pocket Monster-related functions
 │   ├── items.sh    # Item management
 │   ├── shop.sh     # Shop functionality
 │   ├── status.sh   # Status display
@@ -82,14 +82,14 @@ pokecatch/
 
 ## 🎯 How to Play
 
-1. Enter the Safari Zone to look for wild Pokémon
-2. When you encounter a Pokémon, you can:
+1. Enter the Safari Zone to look for wild Pocket Monsters
+2. When you encounter a Pocket Monster, you can:
    - Throw a Safari Ball to catch it
    - Throw a Berry to make it easier to catch
    - Throw Mud to make it harder to catch
    - Run away
 3. Visit the shop to buy more items
-4. Check your Pokédex to see your collection
+4. Check your Pocket Monster dex to see your collection
 5. Monitor your status to track your progress
 
 ## 🎨 Terminal Requirements
@@ -105,5 +105,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- Pokémon sprites and data from [PokéAPI](https://pokeapi.co/)
-- Inspired by the classic Pokémon Safari Zone mechanics
+- Pocket Monster sprites and data from [PokéAPI](https://pokeapi.co/)
+- Inspired by the classic Pocket Monster Safari Zone mechanics

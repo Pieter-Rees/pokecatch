@@ -1,4 +1,6 @@
 {
-        "money": 1000,
-        "inventory": {}
-    }
+  "money": 600,
+  "inventory": {
+    "Pokeball": 0
+  }
+}

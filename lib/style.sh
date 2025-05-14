@@ -32,7 +32,7 @@ EXIT="🚪"
 # Print the game header
 print_header() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║${NC}  ${MONSTER} ${YELLOW}Pokemon Safari Zone${NC} ${MONSTER}  ${BLUE}║${NC}"
+    echo -e "${BLUE}║${NC}  ${MONSTER} ${YELLOW}Pocket Monster Safari Zone${NC} ${MONSTER}  ${BLUE}║${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 }
 
@@ -66,7 +66,7 @@ print_inventory_item() {
         *) icon="•" ;;
     esac
     
-    echo -e "${CYAN}$icon $item:${NC} $count"
+    echo -e "${CYAN}$icon $item${NC}: $count"
 }
 
 # Print the current money amount
@@ -93,8 +93,8 @@ print_warning() {
     echo -e "${YELLOW}⚠ $1${NC}"
 }
 
-# Print a Pokemon encounter message
-print_pokemon_encounter() {
+# Print a Pocket Monster encounter message
+print_pocket_monster_encounter() {
     echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
     echo -e "${PURPLE}║${NC}  ${MONSTER} A wild $1 appeared! ${MONSTER}  ${PURPLE}║${NC}"
     echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"

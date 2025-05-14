@@ -14,14 +14,15 @@ throw_ball() {
 
     # Decrease ball count
     INVENTORY["Pokeball"]=$((INVENTORY["Pokeball"] - 1))
+    save_progress  # Save after using a Pokeball
     
     # Calculate catch probability
     local CATCH_RATE=30  # Base catch rate (from original games)
     
     # Modify catch rate based on Monster's status
-    if [[ "$POKEMON_EATING" == "true" ]]; then
+    if [[ "$pocket_monster_EATING" == "true" ]]; then
         CATCH_RATE=$((CATCH_RATE * 2))  # Double catch rate when eating
-    elif [[ "$POKEMON_ANGRY" == "true" ]]; then
+    elif [[ "$pocket_monster_ANGRY" == "true" ]]; then
         CATCH_RATE=$((CATCH_RATE / 2))  # Halve catch rate when angry
     fi
     
@@ -31,7 +32,7 @@ throw_ball() {
     # Attempt to catch
     if [ $((RANDOM % 100)) -lt $CATCH_PROBABILITY ]; then
         print_success "Gotcha! The Monster was caught!"
-        catch_pokemon "$POKEMON_NAME" $CATCH_PROBABILITY
+        catch_pocket_monster "$pocket_monster_NAME" $CATCH_PROBABILITY
         return 0
     else
         print_warning "Oh no! The Monster broke free!"
@@ -49,6 +50,7 @@ throw_berry() {
 
     # Decrease berry count
     INVENTORY["Berry"]=$((INVENTORY["Berry"] - 1))
+    save_progress  # Save after using a Berry
     
     print_success "You threw a Berry!"
     print_warning "The wild Monster is eating the Berry..."
@@ -66,6 +68,7 @@ throw_mud() {
 
     # Decrease mud count
     INVENTORY["Mud"]=$((INVENTORY["Mud"] - 1))
+    save_progress  # Save after using Mud
     
     print_success "You threw Mud!"
     print_warning "The wild Monster is getting angry..."
