@@ -69,7 +69,26 @@ load_progress() {
             done < <(jq -r '.encounter_stats | to_entries | .[] | "\(.key)=\(.value)"' "$DATA_DIR/save.json")
         fi
     else
+        # Initialize new game state
         MONEY=$STARTING_MONEY
+        
+        # Initialize inventory with starting items from config
+        if jq -e '.starting_items' "config/game_config.json" >/dev/null 2>&1; then
+            while IFS="=" read -r key value; do
+                if [[ -n "$key" && -n "$value" ]]; then
+                    INVENTORY["$key"]=$value
+                fi
+            done < <(jq -r '.starting_items | to_entries | .[] | "\(.key)=\(.value)"' "config/game_config.json")
+        fi
+        
+        # Initialize encounter statistics
+        ENCOUNTER_STATS["total_encounters"]=0
+        ENCOUNTER_STATS["successful_catches"]=0
+        ENCOUNTER_STATS["failed_catches"]=0
+        ENCOUNTER_STATS["fled"]=0
+        
+        # Save initial state
+        save_progress
     fi
 }
 
