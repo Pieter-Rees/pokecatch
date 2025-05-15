@@ -102,6 +102,20 @@ safari() {
                 2)
                     if [[ ${INVENTORY["Rock"]} -le 0 ]]; then
                         print_error "You don't have any Rocks left!"
+                        print_menu_option "1" "$SHOP" "Go to Shop"
+                        print_menu_option "2" "$EXIT" "Stay Here"
+                        read -p "What will you do? " SHOP_CHOICE
+                        case $SHOP_CHOICE in
+                            1)
+                                show_shop
+                                ;;
+                            2)
+                                print_success "You decide to stay and observe the Monster."
+                                ;;
+                            *)
+                                print_error "Invalid choice. Staying here."
+                                ;;
+                        esac
                     else
                         INVENTORY["Rock"]=$((INVENTORY["Rock"] - 1))
                         save_progress
@@ -115,6 +129,20 @@ safari() {
                 3)
                     if [[ ${INVENTORY["Bait"]} -le 0 ]]; then
                         print_error "You don't have any Bait left!"
+                        print_menu_option "1" "$SHOP" "Go to Shop"
+                        print_menu_option "2" "$EXIT" "Stay Here"
+                        read -p "What will you do? " SHOP_CHOICE
+                        case $SHOP_CHOICE in
+                            1)
+                                show_shop
+                                ;;
+                            2)
+                                print_success "You decide to stay and observe the Monster."
+                                ;;
+                            *)
+                                print_error "Invalid choice. Staying here."
+                                ;;
+                        esac
                     else
                         INVENTORY["Bait"]=$((INVENTORY["Bait"] - 1))
                         save_progress
