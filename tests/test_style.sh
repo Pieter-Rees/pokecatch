@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load test utilities
+source test_utils.sh
+
 # Load the script to test
 source ../lib/style.sh
 

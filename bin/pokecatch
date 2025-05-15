@@ -42,6 +42,50 @@ show_current_items() {
     print_divider
 }
 
+# Handle shop menu when out of items
+handle_shop_menu() {
+    print_warning "You need $1 to catch Monster! Visit the shop to buy some."
+    print_menu_option "1" "$SHOP" "Go to Shop"
+    print_menu_option "0" "$BACK" "Stay Here"
+    read -p "What will you do? " SHOP_CHOICE
+    case $SHOP_CHOICE in
+        1)
+            show_shop "true"  # Pass true to return to encounter
+            # Return to monster encounter after shop
+            if [[ ${INVENTORY["Pokeball"]} -gt 0 ]]; then
+                print_success "You return to the monster encounter with your new items!"
+                return 0
+            fi
+            ;;
+        0)
+            print_success "You decide to stay and observe the Monster."
+            return 1
+            ;;
+        *)
+            print_error "Invalid choice. Staying here."
+            return 1
+            ;;
+    esac
+    return 1
+}
+
+# Handle monster status changes and turns
+handle_monster_status() {
+    if [ "$MONSTER_ANGRY" = true ]; then
+        ANGRY_TURNS=$((ANGRY_TURNS - 1))
+        if [ $ANGRY_TURNS -le 0 ]; then
+            MONSTER_ANGRY=false
+            print_warning "The Monster is no longer angry."
+        fi
+    elif [ "$MONSTER_EATING" = true ]; then
+        EATING_TURNS=$((EATING_TURNS - 1))
+        if [ $EATING_TURNS -le 0 ]; then
+            MONSTER_EATING=false
+            print_warning "The Monster is no longer eating."
+        fi
+    fi
+}
+
 # Handle the Safari Zone gameplay
 safari() {
     local MONSTER_ENCOUNTERED=false
@@ -94,45 +138,12 @@ safari() {
                     if [ $BALL_RESULT -eq 0 ]; then
                         MONSTER_ENCOUNTERED=false
                     elif [ $BALL_RESULT -eq 2 ]; then
-                        print_warning "You need Pokeballs to catch Monster! Visit the shop to buy some."
-                        print_menu_option "1" "$SHOP" "Go to Shop"
-                        print_menu_option "0" "$BACK" "Stay Here"
-                        read -p "What will you do? " SHOP_CHOICE
-                        case $SHOP_CHOICE in
-                            1)
-                                show_shop "true"  # Pass true to return to encounter
-                                # Return to monster encounter after shop
-                                if [[ ${INVENTORY["Pokeball"]} -gt 0 ]]; then
-                                    print_success "You return to the monster encounter with your new Pokeballs!"
-                                    continue
-                                fi
-                                ;;
-                            0)
-                                print_success "You decide to stay and observe the Monster."
-                                ;;
-                            *)
-                                print_error "Invalid choice. Staying here."
-                                ;;
-                        esac
+                        handle_shop_menu "Pokeballs"
                     fi
                     ;;
                 2)
                     if [[ ${INVENTORY["Rock"]} -le 0 ]]; then
-                        print_error "You don't have any Rocks left!"
-                        print_menu_option "1" "$SHOP" "Go to Shop"
-                        print_menu_option "0" "$BACK" "Stay Here"
-                        read -p "What will you do? " SHOP_CHOICE
-                        case $SHOP_CHOICE in
-                            1)
-                                show_shop "true"  # Pass true to return to encounter
-                                ;;
-                            0)
-                                print_success "You decide to stay and observe the Monster."
-                                ;;
-                            *)
-                                print_error "Invalid choice. Staying here."
-                                ;;
-                        esac
+                        handle_shop_menu "Rocks"
                     else
                         INVENTORY["Rock"]=$((INVENTORY["Rock"] - 1))
                         save_progress
@@ -145,21 +156,7 @@ safari() {
                     ;;
                 3)
                     if [[ ${INVENTORY["Bait"]} -le 0 ]]; then
-                        print_error "You don't have any Bait left!"
-                        print_menu_option "1" "$SHOP" "Go to Shop"
-                        print_menu_option "0" "$BACK" "Stay Here"
-                        read -p "What will you do? " SHOP_CHOICE
-                        case $SHOP_CHOICE in
-                            1)
-                                show_shop "true"  # Pass true to return to encounter
-                                ;;
-                            0)
-                                print_success "You decide to stay and observe the Monster."
-                                ;;
-                            *)
-                                print_error "Invalid choice. Staying here."
-                                ;;
-                        esac
+                        handle_shop_menu "Bait"
                     else
                         INVENTORY["Bait"]=$((INVENTORY["Bait"] - 1))
                         save_progress
@@ -197,19 +194,12 @@ safari() {
                 # Modify flee chance based on status
                 if [ "$MONSTER_ANGRY" = true ]; then
                     BASE_FLEE_CHANCE=$((BASE_FLEE_CHANCE * 2))
-                    ANGRY_TURNS=$((ANGRY_TURNS - 1))
-                    if [ $ANGRY_TURNS -le 0 ]; then
-                        MONSTER_ANGRY=false
-                        print_warning "The Monster is no longer angry."
-                    fi
                 elif [ "$MONSTER_EATING" = true ]; then
                     BASE_FLEE_CHANCE=$((BASE_FLEE_CHANCE / 4))
-                    EATING_TURNS=$((EATING_TURNS - 1))
-                    if [ $EATING_TURNS -le 0 ]; then
-                        MONSTER_EATING=false
-                        print_warning "The Monster is no longer eating."
-                    fi
                 fi
+                
+                # Handle status changes and turns
+                handle_monster_status
                 
                 if [ $((RANDOM % 100)) -lt $BASE_FLEE_CHANCE ]; then
                     print_warning "The wild Monster fled!"

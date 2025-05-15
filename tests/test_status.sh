@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load test utilities
+source test_utils.sh
+
 # Load the script to test
 source ../lib/status.sh
 
@@ -156,6 +159,59 @@ test_monster_status_effects() {
     assert_equal 1 "$eating_turns" "Should decrease eating turns by 1"
 }
 
+test_show_status() {
+    echo "Testing show_status function..."
+    
+    # Set up test data
+    MONEY=1000
+    declare -A INVENTORY
+    INVENTORY["Pokeball"]=5
+    INVENTORY["Rock"]=3
+    INVENTORY["Bait"]=2
+    
+    # Test status display
+    local output=$(show_status)
+    assert_contains "1000" "$output" "Should show correct money amount"
+    assert_contains "5" "$output" "Should show correct Pokeball count"
+    assert_contains "3" "$output" "Should show correct Rock count"
+    assert_contains "2" "$output" "Should show correct Bait count"
+}
+
+test_show_pokedex() {
+    echo "Testing show_pokedex function..."
+    
+    # Set up test data
+    CAUGHT_MONSTER=("pikachu" "charmander")
+    declare -A MONSTER_STATS_ARRAY
+    MONSTER_STATS_ARRAY["pikachu"]="hp: 35|attack: 55|speed: 90"
+    MONSTER_STATS_ARRAY["charmander"]="hp: 39|attack: 52|speed: 65"
+    
+    # Test Pokédex display
+    local output=$(show_pokedex)
+    assert_contains "pikachu" "$output" "Should show Pikachu"
+    assert_contains "charmander" "$output" "Should show Charmander"
+    assert_contains "hp: 35" "$output" "Should show Pikachu's stats"
+    assert_contains "hp: 39" "$output" "Should show Charmander's stats"
+}
+
+test_search_monster() {
+    echo "Testing search_monster function..."
+    
+    # Set up test data
+    CAUGHT_MONSTER=("pikachu" "raichu" "pichu")
+    declare -A MONSTER_STATS_ARRAY
+    MONSTER_STATS_ARRAY["pikachu"]="hp: 35|attack: 55|speed: 90"
+    MONSTER_STATS_ARRAY["raichu"]="hp: 60|attack: 90|speed: 110"
+    MONSTER_STATS_ARRAY["pichu"]="hp: 20|attack: 40|speed: 60"
+    
+    # Test searching for "pi"
+    local output=$(search_monster "pi")
+    assert_contains "pikachu" "$output" "Should find Pikachu"
+    assert_contains "pichu" "$output" "Should find Pichu"
+    assert_contains "hp: 35" "$output" "Should show Pikachu's stats"
+    assert_contains "hp: 20" "$output" "Should show Pichu's stats"
+}
+
 # Run all tests
 echo "Starting tests..."
 echo "================="
@@ -164,6 +220,9 @@ test_load_config
 test_save_and_load_progress
 test_save_and_load_pokedex
 test_monster_status_effects
+test_show_status
+test_show_pokedex
+test_search_monster
 
 # Cleanup
 rm -rf "$TEST_DIR"

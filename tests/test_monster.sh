@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load test utilities
+source test_utils.sh
+
 # Load the script to test
 source ../lib/monster.sh
 
@@ -61,6 +64,35 @@ test_add_to_pokedex() {
     # Test adding a duplicate monster
     add_to_pokedex "pikachu" "hp: 35|attack: 55|speed: 90"
     assert_equal 1 "${#CAUGHT_MONSTER[@]}" "Should not add duplicate monster"
+}
+
+test_get_random_monster() {
+    echo "Testing get_random_monster function..."
+    
+    # Mock the get_random_pokemon_id function
+    get_random_pokemon_id() { echo "25"; }  # Pikachu's ID
+    export -f get_random_pokemon_id
+    
+    # Mock the fetch_pokemon function
+    fetch_pokemon() { echo '{"name":"pikachu","stats":[{"base_stat":35,"stat":{"name":"hp"}},{"base_stat":55,"stat":{"name":"attack"}},{"base_stat":90,"stat":{"name":"speed"}}]}'; }
+    export -f fetch_pokemon
+    
+    # Mock the extract_pokemon_data function
+    extract_pokemon_data() {
+        local response="$1"
+        local -n name="$2"
+        local -n image_url="$3"
+        local -n stats="$4"
+        name="pikachu"
+        image_url="https://example.com/pikachu.png"
+        stats="hp: 35|attack: 55|speed: 90"
+        return 0
+    }
+    export -f extract_pokemon_data
+    
+    # Test getting a random monster
+    get_random_monster
+    assert_equal 1 "${ENCOUNTER_STATS[total_encounters]}" "Should increment total encounters"
 }
 
 test_catch_monster() {
@@ -135,6 +167,7 @@ echo "Starting tests..."
 echo "================="
 
 test_add_to_pokedex
+test_get_random_monster
 test_catch_monster
 test_monster_status_mechanics
 test_inventory_mechanics

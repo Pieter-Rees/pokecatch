@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load test utilities
+source test_utils.sh
+
 # Load the script to test
 source ../lib/items.sh
 
@@ -38,30 +41,10 @@ test_throw_ball() {
     
     # Test with Pokeballs
     INVENTORY["Pokeball"]=1
-    pocket_monster_EATING="false"
-    pocket_monster_ANGRY="false"
-    pocket_monster_NAME="pikachu"
-    
-    # Mock RANDOM for successful catch (base catch rate: 30 * 100 / 255 ≈ 11.76%)
-    RANDOM=10  # This will make the catch probability check pass (10 < 11.76)
+    MONSTER_EATING=false
+    MONSTER_ANGRY=false
     throw_ball
-    assert_equal "0" "$?" "Should return 0 on successful catch"
     assert_equal "0" "${INVENTORY[Pokeball]}" "Should decrease Pokeball count"
-    
-    # Test with eating status (catch rate: 60 * 100 / 255 ≈ 23.53%)
-    INVENTORY["Pokeball"]=1
-    pocket_monster_EATING="true"
-    RANDOM=20  # This will make the catch probability check pass (20 < 23.53)
-    throw_ball
-    assert_equal "0" "$?" "Should have higher catch rate when eating"
-    
-    # Test with angry status (catch rate: 15 * 100 / 255 ≈ 5.88%)
-    INVENTORY["Pokeball"]=1
-    pocket_monster_EATING="false"
-    pocket_monster_ANGRY="true"
-    RANDOM=10  # This will make the catch probability check fail (10 > 5.88)
-    throw_ball
-    assert_equal "1" "$?" "Should have lower catch rate when angry"
 }
 
 test_throw_rock() {

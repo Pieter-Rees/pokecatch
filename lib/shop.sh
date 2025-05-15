@@ -60,20 +60,6 @@ show_shop() {
     done
 }
 
-# Get the icon for a specific item
-get_item_icon() {
-    local item=$1
-    # Convert item name to lowercase for comparison
-    local item_lower=$(echo "$item" | tr '[:upper:]' '[:lower:]')
-    
-    case $item_lower in
-        "pokeball") echo "$POKEBALL" ;;
-        "rock") echo "$ROCK" ;;
-        "bait") echo "$BAIT" ;;
-        *) echo "❓" ;;  # Question mark for unknown items
-    esac
-}
-
 # ============================================================================
 # Purchase Functions
 # ============================================================================
