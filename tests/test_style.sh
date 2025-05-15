@@ -46,15 +46,21 @@ test_print_inventory_item() {
     assert_contains "Pokeball" "$output" "Should contain item name"
     assert_contains "5" "$output" "Should contain count"
     
-    # Test Berry
-    local output=$(print_inventory_item "Berry" "3")
-    assert_contains "$BERRY" "$output" "Should contain Berry icon"
-    assert_contains "Berry" "$output" "Should contain item name"
+    # Test Rock
+    local output=$(print_inventory_item "Rock" "3")
+    assert_contains "$ROCK" "$output" "Should contain Rock icon"
+    assert_contains "Rock" "$output" "Should contain item name"
     assert_contains "3" "$output" "Should contain count"
+    
+    # Test Bait
+    local output=$(print_inventory_item "Bait" "2")
+    assert_contains "$BAIT" "$output" "Should contain Bait icon"
+    assert_contains "Bait" "$output" "Should contain item name"
+    assert_contains "2" "$output" "Should contain count"
     
     # Test unknown item
     local output=$(print_inventory_item "Unknown" "1")
-    assert_contains "•" "$output" "Should contain default icon"
+    assert_contains "❓" "$output" "Should contain default icon"
     assert_contains "Unknown" "$output" "Should contain item name"
     assert_contains "1" "$output" "Should contain count"
 }

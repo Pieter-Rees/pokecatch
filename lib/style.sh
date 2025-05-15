@@ -18,7 +18,7 @@ POKEBALL="⚪"
 MONSTER="🐾"
 MONEY="💰"
 ROCK="🪨"
-BAIT="🪱"
+BAIT="🍖"
 SHOP="🏪"
 SAFARI="🌴"
 POKEDEX="📱"
@@ -61,28 +61,26 @@ print_inventory_item() {
     local item=$1
     local count=$2
     local icon=""
-    local width=1
     
-    case $item in
-        "Pokeball") 
+    # Convert item name to lowercase for comparison
+    local item_lower=$(echo "$item" | tr '[:upper:]' '[:lower:]')
+    
+    case $item_lower in
+        "pokeball") 
             icon=$POKEBALL
-            width=2  # Pokeball emoji is wider
             ;;
-        "Rock") 
+        "rock") 
             icon=$ROCK
-            width=1
             ;;
-        "Bait") 
+        "bait") 
             icon=$BAIT
-            width=1
             ;;
         *) 
-            icon="•"
-            width=1
+            icon="❓"  # Question mark for unknown items
             ;;
     esac
     
-    printf "${CYAN}%-${width}s %s${NC}: %d\n" "$icon" "$item" "$count"
+    echo -e "${CYAN}${icon} ${item}${NC}: ${count}"
 }
 
 # Print the current money amount

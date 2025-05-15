@@ -13,9 +13,9 @@ print_error() { echo "ERROR: $1"; }
 save_progress() { :; }
 
 # Mock icons
-POKEBALL="⚪"
+POKEBALL="⚫"
 ROCK="🪨"
-BAIT="🪱"
+BAIT="🍖"
 EXIT="🚪"
 
 # Test helper functions
@@ -41,7 +41,7 @@ test_get_item_icon() {
     assert_equal "$POKEBALL" "$(get_item_icon "Pokeball")" "Should return Pokeball icon"
     assert_equal "$ROCK" "$(get_item_icon "Rock")" "Should return Rock icon"
     assert_equal "$BAIT" "$(get_item_icon "Bait")" "Should return Bait icon"
-    assert_equal "•" "$(get_item_icon "Unknown")" "Should return default icon for unknown item"
+    assert_equal "❓" "$(get_item_icon "Unknown")" "Should return default icon for unknown item"
 }
 
 test_buy_item() {
