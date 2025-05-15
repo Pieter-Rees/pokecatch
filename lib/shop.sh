@@ -5,8 +5,8 @@
 # ============================================================================
 
 # Shop items and their costs
-ITEMS=("Pokeball" "Berry" "Mud")
-ITEM_COSTS=(200 100 50)
+ITEMS=("Pokeball" "Rock" "Bait")
+ITEM_COSTS=(200 50 100)
 
 # ============================================================================
 # Shop Display Functions
@@ -14,36 +14,55 @@ ITEM_COSTS=(200 100 50)
 
 # Display the shop menu and handle purchases
 show_shop() {
-    while true; do
-        print_header
-        print_money
-        print_divider
-        echo -e "${CYAN}Available items for sale:${NC}"
-        for i in "${!ITEMS[@]}"; do
-            print_menu_option "$((i+1))" "$(get_item_icon "${ITEMS[$i]}")" "${ITEMS[$i]} - \$${ITEM_COSTS[$i]}"
-        done
-        print_menu_option "0" "$BACK" "Return to Main Menu"
-        read -p "What would you like to buy? " CHOICE
-
-        case $CHOICE in
-            1)
-                buy_item "Pokeball" 200
-                ;;
-            2)
-                buy_item "Berry" 100
-                ;;
-            3)
-                buy_item "Mud" 50
-                ;;
-            0)
-                print_success "Leaving the shop..."
-                return
-                ;;
-            *)
-                print_error "Invalid option. Try again."
-                ;;
-        esac
+    local return_to_encounter=$1  # New parameter to indicate if we should return to encounter
+    
+    print_header
+    print_money
+    print_divider
+    echo -e "${CYAN}Available items for sale:${NC}"
+    for i in "${!ITEMS[@]}"; do
+        print_menu_option "$((i+1))" "$(get_item_icon "${ITEMS[$i]}")" "${ITEMS[$i]} - \$${ITEM_COSTS[$i]}"
     done
+    print_menu_option "0" "$EXIT" "Leave Shop"
+    read -p "What would you like to buy? " CHOICE
+
+    case $CHOICE in
+        1)
+            buy_item "Pokeball" 200
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            else
+                show_shop  # Show shop menu again after purchase
+            fi
+            ;;
+        2)
+            buy_item "Rock" 50
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            else
+                show_shop  # Show shop menu again after purchase
+            fi
+            ;;
+        3)
+            buy_item "Bait" 100
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            else
+                show_shop  # Show shop menu again after purchase
+            fi
+            ;;
+        0)
+            print_success "Leaving the shop..."
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            fi
+            return 1  # Return to main menu
+            ;;
+        *)
+            print_error "Invalid option. Try again."
+            show_shop "$return_to_encounter"  # Show shop menu again after invalid option
+            ;;
+    esac
 }
 
 # Get the icon for a specific item
@@ -51,8 +70,8 @@ get_item_icon() {
     local item=$1
     case $item in
         "Pokeball") echo "$POKEBALL" ;;
-        "Berry") echo "$BERRY" ;;
-        "Mud") echo "$MUD" ;;
+        "Rock") echo "🪨" ;;
+        "Bait") echo "🪱" ;;
         *) echo "•" ;;
     esac
 }
