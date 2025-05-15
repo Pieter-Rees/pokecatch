@@ -35,6 +35,9 @@ safari() {
     local MONSTER_ENCOUNTERED=false
     local MONSTER_ANGRY=false
     local MONSTER_EATING=false
+    local ANGRY_TURNS=0
+    local EATING_TURNS=0
+    local MONSTER_SPEED=0
     
     while true; do
         if [ "$MONSTER_ENCOUNTERED" = false ]; then
@@ -50,6 +53,8 @@ safari() {
                     if [ $((RANDOM % 100)) -lt 30 ]; then
                         MONSTER_ENCOUNTERED=true
                         get_random_monster
+                        # Extract speed stat from monster stats
+                        MONSTER_SPEED=$(echo "$MONSTER_STATS" | grep -o "speed: [0-9]*" | cut -d' ' -f2)
                     else
                         print_warning "You search the area but find no Monster..."
                     fi
@@ -65,8 +70,8 @@ safari() {
         else
             print_divider
             print_menu_option "1" "$POKEBALL" "Throw Pokeball"
-            print_menu_option "2" "$BERRY" "Throw Berry"
-            print_menu_option "3" "$MUD" "Throw Mud"
+            print_menu_option "2" "$ROCK" "Throw Rock"
+            print_menu_option "3" "$BAIT" "Throw Bait"
             print_menu_option "4" "$EXIT" "Run Away"
             read -p "What will you do? " SAFARI_CHOICE
 
@@ -95,20 +100,38 @@ safari() {
                     fi
                     ;;
                 2)
-                    throw_berry
-                    MONSTER_EATING=true
-                    MONSTER_ANGRY=false
+                    if [[ ${INVENTORY["Rock"]} -le 0 ]]; then
+                        print_error "You don't have any Rocks left!"
+                    else
+                        INVENTORY["Rock"]=$((INVENTORY["Rock"] - 1))
+                        save_progress
+                        MONSTER_ANGRY=true
+                        MONSTER_EATING=false
+                        ANGRY_TURNS=$((RANDOM % 5 + 1))
+                        EATING_TURNS=0
+                        print_warning "The Monster is angry! It will be angry for $ANGRY_TURNS turns."
+                    fi
                     ;;
                 3)
-                    throw_mud
-                    MONSTER_ANGRY=true
-                    MONSTER_EATING=false
+                    if [[ ${INVENTORY["Bait"]} -le 0 ]]; then
+                        print_error "You don't have any Bait left!"
+                    else
+                        INVENTORY["Bait"]=$((INVENTORY["Bait"] - 1))
+                        save_progress
+                        MONSTER_EATING=true
+                        MONSTER_ANGRY=false
+                        EATING_TURNS=$((RANDOM % 5 + 1))
+                        ANGRY_TURNS=0
+                        print_warning "The Monster is eating! It will be eating for $EATING_TURNS turns."
+                    fi
                     ;;
                 4)
                     print_warning "You ran away from the wild Monster."
                     MONSTER_ENCOUNTERED=false
-                    MUD_THROWN="false"
-                    BERRY_THROWN="false"
+                    MONSTER_ANGRY=false
+                    MONSTER_EATING=false
+                    ANGRY_TURNS=0
+                    EATING_TURNS=0
                     ;;
                 *)
                     print_error "Invalid choice. Please choose again."
@@ -123,21 +146,36 @@ safari() {
                     continue
                 fi
 
-                local FLEE_CHANCE=20
+                # Base flee chance is based on Speed stat (higher speed = higher flee chance)
+                local BASE_FLEE_CHANCE=$((MONSTER_SPEED / 2))
+                
+                # Modify flee chance based on status
                 if [ "$MONSTER_ANGRY" = true ]; then
-                    FLEE_CHANCE=40
+                    BASE_FLEE_CHANCE=$((BASE_FLEE_CHANCE * 2))
+                    ANGRY_TURNS=$((ANGRY_TURNS - 1))
+                    if [ $ANGRY_TURNS -le 0 ]; then
+                        MONSTER_ANGRY=false
+                        print_warning "The Monster is no longer angry."
+                    fi
                 elif [ "$MONSTER_EATING" = true ]; then
-                    FLEE_CHANCE=10
+                    BASE_FLEE_CHANCE=$((BASE_FLEE_CHANCE / 4))
+                    EATING_TURNS=$((EATING_TURNS - 1))
+                    if [ $EATING_TURNS -le 0 ]; then
+                        MONSTER_EATING=false
+                        print_warning "The Monster is no longer eating."
+                    fi
                 fi
                 
-                if [ $((RANDOM % 100)) -lt $FLEE_CHANCE ]; then
+                if [ $((RANDOM % 100)) -lt $BASE_FLEE_CHANCE ]; then
                     print_warning "The wild Monster fled!"
                     # Increment fled counter
                     ENCOUNTER_STATS["fled"]=$((ENCOUNTER_STATS["fled"] + 1))
                     save_progress
                     MONSTER_ENCOUNTERED=false
-                    MUD_THROWN="false"
-                    BERRY_THROWN="false"
+                    MONSTER_ANGRY=false
+                    MONSTER_EATING=false
+                    ANGRY_TURNS=0
+                    EATING_TURNS=0
                 fi
             fi
         fi

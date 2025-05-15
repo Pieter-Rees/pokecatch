@@ -20,10 +20,10 @@ throw_ball() {
     local CATCH_RATE=30  # Base catch rate (from original games)
     
     # Modify catch rate based on Monster's status
-    if [[ "$pocket_monster_EATING" == "true" ]]; then
-        CATCH_RATE=$((CATCH_RATE * 2))  # Double catch rate when eating
-    elif [[ "$pocket_monster_ANGRY" == "true" ]]; then
-        CATCH_RATE=$((CATCH_RATE / 2))  # Halve catch rate when angry
+    if [[ "$MONSTER_EATING" == "true" ]]; then
+        CATCH_RATE=$((CATCH_RATE / 2))  # Halve catch rate when eating
+    elif [[ "$MONSTER_ANGRY" == "true" ]]; then
+        CATCH_RATE=$((CATCH_RATE * 2))  # Double catch rate when angry
     fi
     
     # Calculate final catch probability
@@ -32,7 +32,7 @@ throw_ball() {
     # Attempt to catch
     if [ $((RANDOM % 100)) -lt $CATCH_PROBABILITY ]; then
         print_success "Gotcha! The Monster was caught!"
-        catch_pocket_monster "$pocket_monster_NAME" $CATCH_PROBABILITY
+        catch_pocket_monster "$MONSTER_NAME" $CATCH_PROBABILITY
         return 0
     else
         print_warning "Oh no! The Monster broke free!"

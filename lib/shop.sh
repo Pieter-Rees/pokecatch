@@ -5,8 +5,8 @@
 # ============================================================================
 
 # Shop items and their costs
-ITEMS=("Pokeball" "Berry" "Mud")
-ITEM_COSTS=(200 100 50)
+ITEMS=("Pokeball" "Rock" "Bait")
+ITEM_COSTS=(200 50 100)
 
 # ============================================================================
 # Shop Display Functions
@@ -29,10 +29,10 @@ show_shop() {
             buy_item "Pokeball" 200
             ;;
         2)
-            buy_item "Berry" 100
+            buy_item "Rock" 50
             ;;
         3)
-            buy_item "Mud" 50
+            buy_item "Bait" 100
             ;;
         0)
             print_success "Leaving the shop..."
@@ -50,8 +50,8 @@ get_item_icon() {
     local item=$1
     case $item in
         "Pokeball") echo "$POKEBALL" ;;
-        "Berry") echo "$BERRY" ;;
-        "Mud") echo "$MUD" ;;
+        "Rock") echo "🪨" ;;
+        "Bait") echo "🪱" ;;
         *) echo "•" ;;
     esac
 }
