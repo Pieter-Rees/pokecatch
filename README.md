@@ -73,14 +73,19 @@ git clone https://github.com/yourusername/pokecatch.git
 cd pokecatch
 ```
 
-2. Install the game:
+2. Initialize the game data:
 ```bash
-sudo make install
+make setup
 ```
 
-3. Run the game:
+3. Make sure all scripts are executable:
 ```bash
-pokecatch
+chmod +x bin/* lib/*.sh
+```
+
+4. Run the game:
+```bash
+./bin/pokecatch
 ```
 
 ## 📁 Project Structure
@@ -107,9 +112,9 @@ pokecatch/
 ## 🎯 How to Play
 
 ### Basic Commands
-- `pokecatch` - Start the game
-- `pokecatch --help` - Show help menu
-- `pokecatch --version` - Display version information
+- `./bin/pokecatch` - Start the game
+- `make test` - Run the test suite
+- `make clean` - Clean up build artifacts
 
 ### Gameplay Flow
 1. Enter the Safari Zone to look for wild Pocket Monsters
@@ -170,21 +175,14 @@ The tests cover:
 
 ### Common Issues
 
-#### Image Display Issues
-- If Pocket Monster sprites aren't displaying:
-  - Ensure `catimg` is properly installed
-  - Check terminal color support: `echo -e "\e[31mRed Text\e[0m"`
-  - Verify terminal size is sufficient
-  - Try running `catimg -w 40 assets/test.png` to test image display
-
 #### Game Won't Start
 - Check all dependencies are installed:
   ```bash
   which bash curl jq catimg shuf
   ```
-- Verify file permissions: `chmod +x bin/pokecatch`
-- Ensure data directory exists: `mkdir -p data`
-- Check for proper installation: `make install`
+- Verify file permissions: `chmod +x bin/* lib/*.sh`
+- Ensure data directory exists: `make setup`
+- Check if game data is initialized: `ls -l data/`
 
 #### Save File Issues
 - If save data is corrupted:
