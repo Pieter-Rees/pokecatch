@@ -2,5 +2,10 @@
     "starting_money": 2500,
     "currency_name": "PokéDollars",
     "min_money": 0,
-    "max_money": 999999
+    "max_money": 999999,
+    "starting_items": {
+        "pokeball": 3,
+        "rock": 3,
+        "bait": 3
+    }
 } 
