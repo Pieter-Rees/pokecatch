@@ -88,7 +88,7 @@ safari() {
                         read -p "What will you do? " SHOP_CHOICE
                         case $SHOP_CHOICE in
                             1)
-                                show_shop
+                                show_shop "true"  # Pass true to return to encounter
                                 ;;
                             2)
                                 print_success "You decide to stay and observe the Monster."
@@ -107,7 +107,7 @@ safari() {
                         read -p "What will you do? " SHOP_CHOICE
                         case $SHOP_CHOICE in
                             1)
-                                show_shop
+                                show_shop "true"  # Pass true to return to encounter
                                 ;;
                             2)
                                 print_success "You decide to stay and observe the Monster."
@@ -134,7 +134,7 @@ safari() {
                         read -p "What will you do? " SHOP_CHOICE
                         case $SHOP_CHOICE in
                             1)
-                                show_shop
+                                show_shop "true"  # Pass true to return to encounter
                                 ;;
                             2)
                                 print_success "You decide to stay and observe the Monster."
@@ -236,7 +236,7 @@ while true; do
             show_status  # Check player status
             ;;
         4)
-            show_shop  # Visit the shop
+            show_shop "false"  # Visit the shop from main menu
             ;;
         5)
             print_success "Exiting the game. Goodbye!"

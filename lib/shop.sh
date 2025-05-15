@@ -14,6 +14,8 @@ ITEM_COSTS=(200 50 100)
 
 # Display the shop menu and handle purchases
 show_shop() {
+    local return_to_encounter=$1  # New parameter to indicate if we should return to encounter
+    
     print_header
     print_money
     print_divider
@@ -27,23 +29,38 @@ show_shop() {
     case $CHOICE in
         1)
             buy_item "Pokeball" 200
-            show_shop  # Show shop menu again after purchase
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            else
+                show_shop  # Show shop menu again after purchase
+            fi
             ;;
         2)
             buy_item "Rock" 50
-            show_shop  # Show shop menu again after purchase
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            else
+                show_shop  # Show shop menu again after purchase
+            fi
             ;;
         3)
             buy_item "Bait" 100
-            show_shop  # Show shop menu again after purchase
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            else
+                show_shop  # Show shop menu again after purchase
+            fi
             ;;
         0)
             print_success "Leaving the shop..."
-            return
+            if [ "$return_to_encounter" = "true" ]; then
+                return 0  # Return to encounter
+            fi
+            return 1  # Return to main menu
             ;;
         *)
             print_error "Invalid option. Try again."
-            show_shop  # Show shop menu again after invalid option
+            show_shop "$return_to_encounter"  # Show shop menu again after invalid option
             ;;
     esac
 }
