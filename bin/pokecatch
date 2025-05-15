@@ -84,7 +84,7 @@ safari() {
             print_menu_option "1" "$POKEBALL" "Throw Pokeball"
             print_menu_option "2" "$ROCK" "Throw Rock"
             print_menu_option "3" "$BAIT" "Throw Bait"
-            print_menu_option "4" "$EXIT" "Run Away"
+            print_menu_option "0" "$EXIT" "Run Away"
             read -p "What will you do? " SAFARI_CHOICE
 
             case $SAFARI_CHOICE in
@@ -120,13 +120,13 @@ safari() {
                     if [[ ${INVENTORY["Rock"]} -le 0 ]]; then
                         print_error "You don't have any Rocks left!"
                         print_menu_option "1" "$SHOP" "Go to Shop"
-                        print_menu_option "2" "$EXIT" "Stay Here"
+                        print_menu_option "0" "$BACK" "Stay Here"
                         read -p "What will you do? " SHOP_CHOICE
                         case $SHOP_CHOICE in
                             1)
                                 show_shop "true"  # Pass true to return to encounter
                                 ;;
-                            2)
+                            0)
                                 print_success "You decide to stay and observe the Monster."
                                 ;;
                             *)
@@ -147,13 +147,13 @@ safari() {
                     if [[ ${INVENTORY["Bait"]} -le 0 ]]; then
                         print_error "You don't have any Bait left!"
                         print_menu_option "1" "$SHOP" "Go to Shop"
-                        print_menu_option "2" "$EXIT" "Stay Here"
+                        print_menu_option "0" "$BACK" "Stay Here"
                         read -p "What will you do? " SHOP_CHOICE
                         case $SHOP_CHOICE in
                             1)
                                 show_shop "true"  # Pass true to return to encounter
                                 ;;
-                            2)
+                            0)
                                 print_success "You decide to stay and observe the Monster."
                                 ;;
                             *)

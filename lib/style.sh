@@ -34,7 +34,8 @@ BACK="⬅️"
 # Print the game header
 print_header() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║${NC}  ${MONSTER} ${YELLOW}Pocket Monster Safari Zone${NC} ${MONSTER}  ${BLUE}║${NC}"
+    echo -e "${BLUE}║${NC}  ${MONSTER} ${YELLOW}Pokémon${NC} ${GREEN}Safari Zone${NC} ${MONSTER}  ${BLUE}║${NC}"
+    echo -e "${BLUE}║${NC}  ${CYAN}Gotta catch 'em all!${NC}  ${BLUE}║${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 }
 
@@ -52,7 +53,7 @@ print_menu_option() {
     local number=$1
     local icon=$2
     local text=$3
-    echo -e "${CYAN}[${number}]${NC} ${icon} ${text}"
+    echo -e "${CYAN}[${number}]${NC} ${icon}  ${text}"
 }
 
 # Print an inventory item with its count
@@ -60,15 +61,28 @@ print_inventory_item() {
     local item=$1
     local count=$2
     local icon=""
+    local width=1
     
     case $item in
-        "Pokeball") icon=$POKEBALL ;;
-        "Berry") icon=$BERRY ;;
-        "Mud") icon=$MUD ;;
-        *) icon="•" ;;
+        "Pokeball") 
+            icon=$POKEBALL
+            width=2  # Pokeball emoji is wider
+            ;;
+        "Rock") 
+            icon=$ROCK
+            width=1
+            ;;
+        "Bait") 
+            icon=$BAIT
+            width=1
+            ;;
+        *) 
+            icon="•"
+            width=1
+            ;;
     esac
     
-    echo -e "${CYAN}$icon $item${NC}: $count"
+    printf "${CYAN}%-${width}s %s${NC}: %d\n" "$icon" "$item" "$count"
 }
 
 # Print the current money amount
