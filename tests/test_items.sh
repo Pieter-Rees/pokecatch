@@ -64,38 +64,38 @@ test_throw_ball() {
     assert_equal "1" "$?" "Should have lower catch rate when angry"
 }
 
-test_throw_berry() {
-    echo "Testing throw_berry function..."
+test_throw_rock() {
+    echo "Testing throw_rock function..."
     
-    # Test with no Berries
+    # Test with no Rocks
     declare -A INVENTORY
-    INVENTORY["Berry"]=0
-    throw_berry
-    assert_equal "1" "$?" "Should return 1 when no Berries"
+    INVENTORY["Rock"]=0
+    throw_rock
+    assert_equal "1" "$?" "Should return 1 when no Rocks"
     
-    # Test with Berries
-    INVENTORY["Berry"]=1
-    throw_berry
+    # Test with Rocks
+    INVENTORY["Rock"]=1
+    throw_rock
     assert_equal "0" "$?" "Should return 0 on successful throw"
-    assert_equal "0" "${INVENTORY[Berry]}" "Should decrease Berry count"
-    assert_equal "true" "$BERRY_THROWN" "Should set BERRY_THROWN to true"
+    assert_equal "0" "${INVENTORY[Rock]}" "Should decrease Rock count"
+    assert_equal "true" "$MONSTER_ANGRY" "Should set MONSTER_ANGRY to true"
 }
 
-test_throw_mud() {
-    echo "Testing throw_mud function..."
+test_throw_bait() {
+    echo "Testing throw_bait function..."
     
-    # Test with no Mud
+    # Test with no Bait
     declare -A INVENTORY
-    INVENTORY["Mud"]=0
-    throw_mud
-    assert_equal "1" "$?" "Should return 1 when no Mud"
+    INVENTORY["Bait"]=0
+    throw_bait
+    assert_equal "1" "$?" "Should return 1 when no Bait"
     
-    # Test with Mud
-    INVENTORY["Mud"]=1
-    throw_mud
+    # Test with Bait
+    INVENTORY["Bait"]=1
+    throw_bait
     assert_equal "0" "$?" "Should return 0 on successful throw"
-    assert_equal "0" "${INVENTORY[Mud]}" "Should decrease Mud count"
-    assert_equal "true" "$MUD_THROWN" "Should set MUD_THROWN to true"
+    assert_equal "0" "${INVENTORY[Bait]}" "Should decrease Bait count"
+    assert_equal "true" "$MONSTER_EATING" "Should set MONSTER_EATING to true"
 }
 
 # Run all tests
@@ -103,8 +103,8 @@ echo "Starting tests..."
 echo "================="
 
 test_throw_ball
-test_throw_berry
-test_throw_mud
+test_throw_rock
+test_throw_bait
 
 echo "================="
 echo "Tests completed!" 

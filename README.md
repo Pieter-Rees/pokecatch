@@ -24,8 +24,8 @@ A fun command-line Pocket Monster Safari Zone simulator with a beautiful termina
 ### Game Mechanics
 - 🎯 Multiple catching strategies:
   - Safari Balls for direct capture attempts
-  - Berries to increase catch rate
-  - Mud to decrease flee rate
+  - Rocks to make Pocket Monsters angry (easier to catch but more likely to flee)
+  - Bait to make Pocket Monsters eat (harder to catch but less likely to flee)
 - 💰 In-game economy with:
   - Currency earned from successful captures
   - Shop system for purchasing items
@@ -120,13 +120,13 @@ pokecatch/
 1. Enter the Safari Zone to look for wild Pocket Monsters
 2. When you encounter a Pocket Monster, you can:
    - Throw a Safari Ball to catch it
-   - Throw a Berry to make it easier to catch
-   - Throw Mud to make it harder to flee
+   - Throw a Rock to make it angry (easier to catch but more likely to flee)
+   - Throw Bait to make it eat (harder to catch but less likely to flee)
    - Run away
 3. Visit the shop to:
    - Buy Safari Balls
-   - Purchase Berries
-   - Stock up on Mud
+   - Purchase Rocks
+   - Stock up on Bait
    - Check your balance
 4. Check your Pocket Monster dex to:
    - View your collection
@@ -139,8 +139,8 @@ pokecatch/
    - See game progress
 
 ### Advanced Strategies
-- Use Berries before throwing Safari Balls for better catch rates
-- Apply Mud when encountering rare Pocket Monsters to prevent fleeing
+- Use Rocks before throwing Safari Balls for better catch rates
+- Apply Bait when encountering rare Pocket Monsters to prevent fleeing
 - Balance your inventory between different item types
 - Save your currency for important purchases
 - Track which Pocket Monsters you still need to catch

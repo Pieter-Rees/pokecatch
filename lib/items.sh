@@ -48,38 +48,38 @@ throw_ball() {
     return 1  # Return failure
 }
 
-# Throw a Berry to make the Monster eat
-throw_berry() {
-    # Check if player has Berries
-    if [[ ${INVENTORY["Berry"]} -le 0 ]]; then
-        print_error "You don't have any Berries left!"
+# Throw a Rock to make the Monster angry
+throw_rock() {
+    # Check if player has Rocks
+    if [[ ${INVENTORY["Rock"]} -le 0 ]]; then
+        print_error "You don't have any Rocks left!"
         return 1
     fi
 
-    # Decrease berry count
-    INVENTORY["Berry"]=$((INVENTORY["Berry"] - 1))
-    save_progress  # Save after using a Berry
+    # Decrease rock count
+    INVENTORY["Rock"]=$((INVENTORY["Rock"] - 1))
+    save_progress  # Save after using a Rock
     
-    print_success "You threw a Berry!"
-    print_warning "The wild Monster is eating the Berry..."
-    MONSTER_EATING="true"
+    print_success "You threw a Rock!"
+    print_warning "The wild Monster is getting angry..."
+    MONSTER_ANGRY="true"
     return 0
 }
 
-# Throw Mud to make the Monster angry
-throw_mud() {
-    # Check if player has Mud
-    if [[ ${INVENTORY["Mud"]} -le 0 ]]; then
-        print_error "You don't have any Mud left!"
+# Throw Bait to make the Monster eat
+throw_bait() {
+    # Check if player has Bait
+    if [[ ${INVENTORY["Bait"]} -le 0 ]]; then
+        print_error "You don't have any Bait left!"
         return 1
     fi
 
-    # Decrease mud count
-    INVENTORY["Mud"]=$((INVENTORY["Mud"] - 1))
-    save_progress  # Save after using Mud
+    # Decrease bait count
+    INVENTORY["Bait"]=$((INVENTORY["Bait"] - 1))
+    save_progress  # Save after using Bait
     
-    print_success "You threw Mud!"
-    print_warning "The wild Monster is getting angry..."
-    MONSTER_ANGRY="true"
+    print_success "You threw Bait!"
+    print_warning "The wild Monster is eating the Bait..."
+    MONSTER_EATING="true"
     return 0
 }
