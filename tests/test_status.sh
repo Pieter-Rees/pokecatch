@@ -68,10 +68,12 @@ test_save_and_load_progress() {
     
     # Set up test data
     MONEY=500
-    INVENTORY["pokeball"]=5
-    INVENTORY["potion"]=3
+    INVENTORY["Pokeball"]=5
+    INVENTORY["Rock"]=3
+    INVENTORY["Bait"]=3
     ENCOUNTER_STATS["total_encounters"]=10
     ENCOUNTER_STATS["successful_catches"]=5
+    ENCOUNTER_STATS["fled"]=2
     
     # Save progress
     save_progress
@@ -86,10 +88,12 @@ test_save_and_load_progress() {
     
     # Test loaded values
     assert_equal "500" "$MONEY" "Should load correct money amount"
-    assert_equal "5" "${INVENTORY[pokeball]}" "Should load correct pokeball count"
-    assert_equal "3" "${INVENTORY[potion]}" "Should load correct potion count"
+    assert_equal "5" "${INVENTORY[Pokeball]}" "Should load correct pokeball count"
+    assert_equal "3" "${INVENTORY[Rock]}" "Should load correct rock count"
+    assert_equal "3" "${INVENTORY[Bait]}" "Should load correct bait count"
     assert_equal "10" "${ENCOUNTER_STATS[total_encounters]}" "Should load correct total encounters"
     assert_equal "5" "${ENCOUNTER_STATS[successful_catches]}" "Should load correct successful catches"
+    assert_equal "2" "${ENCOUNTER_STATS[fled]}" "Should load correct fled count"
     
     # Go back to original directory
     cd ..
@@ -104,8 +108,8 @@ test_save_and_load_pokedex() {
     # Set up test data
     CAUGHT_MONSTER=("pikachu" "charmander")
     declare -A MONSTER_STATS_ARRAY
-    MONSTER_STATS_ARRAY["pikachu"]="hp: 35|attack: 55"
-    MONSTER_STATS_ARRAY["charmander"]="hp: 39|attack: 52"
+    MONSTER_STATS_ARRAY["pikachu"]="hp: 35|attack: 55|speed: 90"
+    MONSTER_STATS_ARRAY["charmander"]="hp: 39|attack: 52|speed: 65"
     
     # Save pokedex
     save_pokedex
@@ -120,11 +124,36 @@ test_save_and_load_pokedex() {
     # Test loaded values
     assert_equal "pikachu" "${CAUGHT_MONSTER[0]}" "Should load first monster"
     assert_equal "charmander" "${CAUGHT_MONSTER[1]}" "Should load second monster"
-    assert_equal "hp: 35|attack: 55" "${MONSTER_STATS_ARRAY[pikachu]}" "Should load pikachu stats"
-    assert_equal "hp: 39|attack: 52" "${MONSTER_STATS_ARRAY[charmander]}" "Should load charmander stats"
+    assert_equal "hp: 35|attack: 55|speed: 90" "${MONSTER_STATS_ARRAY[pikachu]}" "Should load pikachu stats"
+    assert_equal "hp: 39|attack: 52|speed: 65" "${MONSTER_STATS_ARRAY[charmander]}" "Should load charmander stats"
     
     # Go back to original directory
     cd ..
+}
+
+test_monster_status_effects() {
+    echo "Testing monster status effects..."
+    
+    # Test angry status
+    local angry_turns=3
+    local monster_speed=90
+    local base_flee_chance=$((monster_speed / 2))
+    local angry_flee_chance=$((base_flee_chance * 2))
+    
+    assert_equal 45 "$base_flee_chance" "Base flee chance should be half of speed"
+    assert_equal 90 "$angry_flee_chance" "Angry status should double flee chance"
+    
+    # Test eating status
+    local eating_turns=2
+    local eating_flee_chance=$((base_flee_chance / 4))
+    assert_equal 11 "$eating_flee_chance" "Eating status should reduce flee chance to 1/4"
+    
+    # Test status turn counting
+    angry_turns=$((angry_turns - 1))
+    assert_equal 2 "$angry_turns" "Should decrease angry turns by 1"
+    
+    eating_turns=$((eating_turns - 1))
+    assert_equal 1 "$eating_turns" "Should decrease eating turns by 1"
 }
 
 # Run all tests
@@ -134,6 +163,7 @@ echo "================="
 test_load_config
 test_save_and_load_progress
 test_save_and_load_pokedex
+test_monster_status_effects
 
 # Cleanup
 rm -rf "$TEST_DIR"

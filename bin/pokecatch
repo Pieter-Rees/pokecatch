@@ -14,11 +14,11 @@ mkdir -p "$DATA_DIR"
 # ============================================================================
 # Import Dependencies
 # ============================================================================
+source "$LIB_DIR/style.sh"
 source "$LIB_DIR/monster.sh"
 source "$LIB_DIR/items.sh"
 source "$LIB_DIR/status.sh"
 source "$LIB_DIR/shop.sh"
-source "$LIB_DIR/style.sh"
 
 # ============================================================================
 # Game Initialization
