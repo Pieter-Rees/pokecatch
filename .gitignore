@@ -4,30 +4,87 @@
 *.temp
 *.swp
 *~
+*.swx
+*.swo
 
 # User data and save files
 data/pokedex.json
 data/save.json
 *.save
 *.bak
+*.backup
 
 # System files
 .DS_Store
 Thumbs.db
 *.log
+.directory
+desktop.ini
 
 # Build artifacts
 *.o
 *.so
 *.a
 *.out
+*.exe
+*.dll
+*.dylib
+*.class
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # IDE and editor files
 .idea/
 .vscode/
 *.sublime-*
 *.code-workspace
+.project
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+.history/
 
 # Local configuration
 .env
 config.local.sh
+*.local
+*.local.*
+
+# Debug files
+*.debug
+*.debug.*
+debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage and test reports
+coverage/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/

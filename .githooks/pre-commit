@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Run the tests
+make test
+
+# Store the exit status of the test command
+TEST_STATUS=$?
+
+# If tests failed, prevent the commit
+if [ $TEST_STATUS -ne 0 ]; then
+    echo "❌ Tests failed. Commit aborted."
+    exit 1
+fi
+
+# If tests passed, allow the commit
+echo "✅ All tests passed!"
+exit 0 
