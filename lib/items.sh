@@ -12,6 +12,13 @@ throw_ball() {
         return 2  # Special return code for no Pokeballs
     fi
 
+    # Initialize or increment throw attempt counter
+    if [[ -z "$THROW_ATTEMPT" ]]; then
+        THROW_ATTEMPT=1
+    else
+        THROW_ATTEMPT=$((THROW_ATTEMPT + 1))
+    fi
+
     # Decrease ball count
     INVENTORY["Pokeball"]=$((INVENTORY["Pokeball"] - 1))
     save_progress  # Save after using a Pokeball
@@ -20,9 +27,9 @@ throw_ball() {
     local CATCH_RATE=30  # Base catch rate (from original games)
     
     # Modify catch rate based on Monster's status
-    if [[ "$pocket_monster_EATING" == "true" ]]; then
+    if [[ "$MONSTER_EATING" == "true" ]]; then
         CATCH_RATE=$((CATCH_RATE * 2))  # Double catch rate when eating
-    elif [[ "$pocket_monster_ANGRY" == "true" ]]; then
+    elif [[ "$MONSTER_ANGRY" == "true" ]]; then
         CATCH_RATE=$((CATCH_RATE / 2))  # Halve catch rate when angry
     fi
     
@@ -30,14 +37,12 @@ throw_ball() {
     local CATCH_PROBABILITY=$((CATCH_RATE * 100 / 255))
     
     # Attempt to catch
-    if [ $((RANDOM % 100)) -lt $CATCH_PROBABILITY ]; then
-        print_success "Gotcha! The Monster was caught!"
-        catch_pocket_monster "$pocket_monster_NAME" $CATCH_PROBABILITY
-        return 0
-    else
-        print_warning "Oh no! The Monster broke free!"
-        return 1
+    if catch_monster "$MONSTER_NAME" $CATCH_PROBABILITY $THROW_ATTEMPT; then
+        print_success "Gotcha! The $MONSTER_NAME was caught!"
+        THROW_ATTEMPT=0  # Reset for next encounter
+        return 0  # Return success
     fi
+    return 1  # Return failure
 }
 
 # Throw a Berry to make the Monster eat
@@ -54,7 +59,7 @@ throw_berry() {
     
     print_success "You threw a Berry!"
     print_warning "The wild Monster is eating the Berry..."
-    BERRY_THROWN="true"
+    MONSTER_EATING="true"
     return 0
 }
 
@@ -72,6 +77,6 @@ throw_mud() {
     
     print_success "You threw Mud!"
     print_warning "The wild Monster is getting angry..."
-    MUD_THROWN="true"
+    MONSTER_ANGRY="true"
     return 0
 }

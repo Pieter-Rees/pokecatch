@@ -10,6 +10,8 @@ declare -A ENCOUNTER_STATS=(
     ["failed_catches"]=0
     ["fled"]=0
 )
+declare -A MONSTER_STATS_ARRAY
+declare -a CAUGHT_MONSTER
 
 # ============================================================================
 # Configuration Loading
@@ -38,33 +40,33 @@ load_config() {
 # Load progress from save.json
 load_progress() {
     # Create data directory if it doesn't exist
-    mkdir -p data
+    mkdir -p "$DATA_DIR"
 
     # Load configuration first
     load_config
 
-    if [[ -f "data/save.json" ]]; then
+    if [[ -f "$DATA_DIR/save.json" ]]; then
         # Load money
-        MONEY=$(jq -r --arg default "$STARTING_MONEY" '.money // $default' data/save.json)
+        MONEY=$(jq -r --arg default "$STARTING_MONEY" '.money // $default' "$DATA_DIR/save.json")
         MONEY=${MONEY:-$STARTING_MONEY}  # Ensure MONEY is set
         MONEY=$((MONEY))  # Convert to number
         
         # Load inventory items
-        if jq -e '.inventory' data/save.json >/dev/null 2>&1; then
+        if jq -e '.inventory' "$DATA_DIR/save.json" >/dev/null 2>&1; then
             while IFS="=" read -r key value; do
                 if [[ -n "$key" && -n "$value" ]]; then
                     INVENTORY["$key"]=$value
                 fi
-            done < <(jq -r '.inventory | to_entries | .[] | "\(.key)=\(.value)"' data/save.json)
+            done < <(jq -r '.inventory | to_entries | .[] | "\(.key)=\(.value)"' "$DATA_DIR/save.json")
         fi
 
         # Load encounter statistics
-        if jq -e '.encounter_stats' data/save.json >/dev/null 2>&1; then
+        if jq -e '.encounter_stats' "$DATA_DIR/save.json" >/dev/null 2>&1; then
             while IFS="=" read -r key value; do
                 if [[ -n "$key" && -n "$value" ]]; then
                     ENCOUNTER_STATS["$key"]=$value
                 fi
-            done < <(jq -r '.encounter_stats | to_entries | .[] | "\(.key)=\(.value)"' data/save.json)
+            done < <(jq -r '.encounter_stats | to_entries | .[] | "\(.key)=\(.value)"' "$DATA_DIR/save.json")
         fi
     else
         MONEY=$STARTING_MONEY
@@ -74,7 +76,7 @@ load_progress() {
 # Save progress to save.json
 save_progress() {
     # Create data directory if it doesn't exist
-    mkdir -p data
+    mkdir -p "$DATA_DIR"
 
     # Create inventory JSON object
     local inventory_json="{}"
@@ -101,7 +103,7 @@ save_progress() {
             "money": ($money|tonumber),
             "inventory": $inventory,
             "encounter_stats": $encounter_stats
-        }' > data/save.json
+        }' > "$DATA_DIR/save.json"
 }
 
 # ============================================================================
@@ -111,32 +113,56 @@ save_progress() {
 # Load Pokédex from pokedex.json
 load_pokedex() {
     # Create data directory if it doesn't exist
-    mkdir -p data
+    mkdir -p "$DATA_DIR"
 
-    if [[ -f "data/pokedex.json" ]]; then
-        CAUGHT_MONSTER=($(jq -r '.pokedex[]' data/pokedex.json))
+    # Initialize arrays
+    CAUGHT_MONSTER=()
+    declare -A MONSTER_STATS_ARRAY
+
+    if [[ -f "$DATA_DIR/pokedex.json" ]]; then
+        # Read the pokedex array
+        mapfile -t CAUGHT_MONSTER < <(jq -r '.pokedex[]' "$DATA_DIR/pokedex.json")
+        
         # Load monster stats
-        while IFS="=" read -r key value; do
-            if [[ -n "$key" && -n "$value" ]]; then
-                MONSTER_STATS_ARRAY["$key"]="$value"
+        while IFS="=" read -r monster stats_json; do
+            if [[ -n "$monster" && -n "$stats_json" ]]; then
+                # Convert JSON stats back to pipe-separated format
+                local stats=""
+                while IFS="=" read -r stat_name stat_value; do
+                    if [[ -n "$stat_name" && -n "$stat_value" ]]; then
+                        if [[ -n "$stats" ]]; then
+                            stats+="|"
+                        fi
+                        stats+="${stat_name}:${stat_value}"
+                    fi
+                done < <(echo "$stats_json" | jq -r 'to_entries | .[] | "\(.key)=\(.value)"')
+                MONSTER_STATS_ARRAY["$monster"]="$stats"
             fi
-        done < <(jq -r '.monster_stats | to_entries | .[] | "\(.key)=\(.value)"' data/pokedex.json)
-    else
-        CAUGHT_MONSTER=()
-        declare -A MONSTER_STATS_ARRAY
+        done < <(jq -r '.monster_stats | to_entries | .[] | "\(.key)=\(.value)"' "$DATA_DIR/pokedex.json")
     fi
 }
 
 # Save Pokédex to pokedex.json
 save_pokedex() {
     # Create data directory if it doesn't exist
-    mkdir -p data
+    mkdir -p "$DATA_DIR"
 
     # Create monster stats JSON object
     local monster_stats_json="{}"
     for monster in "${!MONSTER_STATS_ARRAY[@]}"; do
         if [[ -n "$monster" && -n "${MONSTER_STATS_ARRAY[$monster]}" ]]; then
-            monster_stats_json=$(echo "$monster_stats_json" | jq --arg key "$monster" --arg value "${MONSTER_STATS_ARRAY[$monster]}" '. + {($key): $value}')
+            # Convert pipe-separated stats to JSON format
+            local stats="${MONSTER_STATS_ARRAY[$monster]}"
+            local stats_json="{}"
+            while IFS='|' read -ra stat_array; do
+                for stat in "${stat_array[@]}"; do
+                    if [[ -n "$stat" ]]; then
+                        IFS=':' read -r stat_name stat_value <<< "$stat"
+                        stats_json=$(echo "$stats_json" | jq --arg name "$stat_name" --arg value "$stat_value" '. + {($name): $value}')
+                    fi
+                done
+            done <<< "$stats"
+            monster_stats_json=$(echo "$monster_stats_json" | jq --arg key "$monster" --argjson value "$stats_json" '. + {($key): $value}')
         fi
     done
 
@@ -147,7 +173,7 @@ save_pokedex() {
         '{
             "pokedex": $pokedex,
             "monster_stats": $monster_stats
-        }' > data/pokedex.json
+        }' > "$DATA_DIR/pokedex.json"
 }
 
 # ============================================================================
@@ -159,7 +185,7 @@ show_status() {
     print_header
     print_money
     print_divider
-    echo -e "${CYAN}Caught Pocket Monsters:${NC} ${#CAUGHT_pocket_monster[@]}"
+    echo -e "${CYAN}Caught Pocket Monsters:${NC} ${#CAUGHT_MONSTER[@]}"
     print_divider
     echo -e "${CYAN}Encounter Statistics:${NC}"
     echo -e "  Total Encounters: ${ENCOUNTER_STATS["total_encounters"]}"
@@ -172,7 +198,7 @@ show_status() {
     fi
     print_divider
     echo -e "${CYAN}Pokédex:${NC}"
-    for pocket_monster in "${CAUGHT_pocket_monster[@]}"; do
+    for pocket_monster in "${CAUGHT_MONSTER[@]}"; do
         echo -e "  $pocket_monster"
     done
     print_divider
@@ -185,22 +211,171 @@ show_status() {
 
 # Show Pokédex contents
 show_pokedex() {
-    print_header
-    if [ ${#CAUGHT_pocket_monster[@]} -eq 0 ]; then
-        print_warning "Your Pocket Monster dex is empty. Go catch some Pocket Monsters!"
-        return
-    fi
+    while true; do
+        print_header
+        if [ ${#CAUGHT_MONSTER[@]} -eq 0 ]; then
+            print_warning "Your Pocket Monster dex is empty. Go catch some Pocket Monsters!"
+            return
+        fi
 
-    echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${PURPLE}║${NC}  ${pocket_monster_DEX} Your Pokédex ${pocket_monster_DEX}  ${PURPLE}║${NC}"
-    echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
-    print_divider
-    echo -e "${CYAN}Total Pocket Monsters caught:${NC} ${#CAUGHT_pocket_monster[@]}"
-    print_divider
-    for pocket_monster in "${CAUGHT_pocket_monster[@]}"; do
-        echo -e "  $pocket_monster"
+        echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${PURPLE}║${NC}  ${POKEDEX} Your Pokédex ${POKEDEX}  ${PURPLE}║${NC}"
+        echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+        print_divider
+        echo -e "${CYAN}Total Pocket Monsters caught:${NC} ${#CAUGHT_MONSTER[@]}"
+        print_divider
+        
+        # Display menu options
+        print_menu_option "1" "$POKEDEX" "View All Monsters"
+        print_menu_option "2" "$SEARCH" "Search Monster"
+        print_menu_option "0" "$BACK" "Return to Main Menu"
+        read -p "What would you like to do? " POKEDEX_CHOICE
+
+        case $POKEDEX_CHOICE in
+            1)
+                show_all_monsters
+                ;;
+            2)
+                search_monster
+                ;;
+            0)
+                return
+                ;;
+            *)
+                print_error "Invalid option. Please try again."
+                ;;
+        esac
     done
-    print_divider
+}
+
+# Show all monsters in the Pokédex
+show_all_monsters() {
+    while true; do
+        print_header
+        echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${PURPLE}║${NC}  ${POKEDEX} All Monsters ${POKEDEX}  ${PURPLE}║${NC}"
+        echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+        print_divider
+
+        # Sort the caught monsters alphabetically
+        IFS=$'\n' sorted_monsters=($(sort <<<"${CAUGHT_MONSTER[*]}"))
+        unset IFS
+
+        # Display numbered list of monsters
+        for i in "${!sorted_monsters[@]}"; do
+            monster="${sorted_monsters[$i]}"
+            monster_name=$(echo "$monster" | sed 's/^./\U&/')
+            print_menu_option "$((i+1))" "$MONSTER" "$monster_name"
+        done
+        print_divider
+        print_menu_option "0" "$BACK" "Return to Pokédex Menu"
+        
+        read -p "Select a monster number to view details (0 to return): " SELECTION
+        
+        # Check if selection is valid
+        if [[ "$SELECTION" == "0" ]]; then
+            return
+        elif [[ "$SELECTION" =~ ^[0-9]+$ ]] && [ "$SELECTION" -le "${#sorted_monsters[@]}" ] && [ "$SELECTION" -gt 0 ]; then
+            # Get the selected monster
+            selected_monster="${sorted_monsters[$((SELECTION-1))]}"
+            view_monster_details "$selected_monster"
+        else
+            print_error "Invalid selection. Please try again."
+            sleep 1
+        fi
+    done
+}
+
+# View detailed information about a specific monster
+view_monster_details() {
+    local monster=$1
+    local monster_name=$(echo "$monster" | sed 's/^./\U&/')
+    
+    while true; do
+        print_header
+        echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${PURPLE}║${NC}  ${MONSTER} $monster_name ${MONSTER}  ${PURPLE}║${NC}"
+        echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+        print_divider
+        
+        # Display monster stats if available
+        if [[ -n "${MONSTER_STATS_ARRAY[$monster]}" ]]; then
+            echo -e "${CYAN}Base Stats:${NC}"
+            echo "${MONSTER_STATS_ARRAY[$monster]}" | tr '|' '\n' | while IFS=':' read -r stat_name stat_value; do
+                # Capitalize and format stat name
+                stat_name=$(echo "$stat_name" | sed 's/^./\U&/')
+                # Create a visual stat bar
+                local bar_length=$((stat_value / 10))
+                local bar=""
+                for ((i=0; i<bar_length; i++)); do
+                    bar+="█"
+                done
+                echo -e "  ${GREEN}$stat_name${NC}: $stat_value"
+                echo -e "  ${YELLOW}$bar${NC}"
+            done
+        else
+            print_warning "No stats available for this monster"
+        fi
+        print_divider
+        
+        print_menu_option "0" "$BACK" "Return to Monster List"
+        read -p "Press 0 to return to the monster list... " CHOICE
+        if [[ "$CHOICE" == "0" ]]; then
+            return
+        fi
+    done
+}
+
+# Search for a specific monster in the Pokédex
+search_monster() {
+    while true; do
+        print_header
+        echo -e "${PURPLE}╔══════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${PURPLE}║${NC}  ${SEARCH} Search Pokédex ${SEARCH}  ${PURPLE}║${NC}"
+        echo -e "${PURPLE}╚══════════════════════════════════════════════════════════╝${NC}"
+        print_divider
+        
+        print_menu_option "0" "$BACK" "Return to Pokédex Menu"
+        read -p "Enter monster name to search (0 to return): " SEARCH_TERM
+        
+        if [[ "$SEARCH_TERM" == "0" ]]; then
+            return
+        fi
+        
+        # Convert search term to lowercase for case-insensitive search
+        SEARCH_TERM=$(echo "$SEARCH_TERM" | tr '[:upper:]' '[:lower:]')
+        
+        # Search through caught monsters
+        local found=false
+        for monster in "${CAUGHT_MONSTER[@]}"; do
+            if [[ "$monster" == *"$SEARCH_TERM"* ]]; then
+                found=true
+                # Capitalize first letter of monster name
+                monster_name=$(echo "$monster" | sed 's/^./\U&/')
+                echo -e "${YELLOW}$monster_name${NC}"
+                
+                # Display monster stats if available
+                if [[ -n "${MONSTER_STATS_ARRAY[$monster]}" ]]; then
+                    echo -e "${CYAN}Stats:${NC}"
+                    echo "${MONSTER_STATS_ARRAY[$monster]}" | tr '|' '\n' | while IFS=':' read -r stat_name stat_value; do
+                        # Capitalize and format stat name
+                        stat_name=$(echo "$stat_name" | sed 's/^./\U&/')
+                        echo -e "  ${GREEN}$stat_name${NC}: $stat_value"
+                    done
+                fi
+                print_divider
+            fi
+        done
+        
+        if [ "$found" = false ]; then
+            print_warning "No monsters found matching '$SEARCH_TERM'"
+        fi
+        
+        read -p "Press Enter to continue searching (0 to return)... " CHOICE
+        if [[ "$CHOICE" == "0" ]]; then
+            return
+        fi
+    done
 }
 
 # Print the current money amount
