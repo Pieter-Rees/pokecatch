@@ -61,7 +61,7 @@ display_monster() {
             print_divider
             # Center the Monster image
             echo
-            catimg -w 40 "$TEMP_IMAGE" | sed 's/^/    /'
+            catimg -w 100 "$TEMP_IMAGE" | sed 's/^/    /'
             echo
             print_divider
             # Capitalize first letter of Monster name

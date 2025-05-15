@@ -27,12 +27,15 @@ show_shop() {
     case $CHOICE in
         1)
             buy_item "Pokeball" 200
+            show_shop  # Show shop menu again after purchase
             ;;
         2)
             buy_item "Rock" 50
+            show_shop  # Show shop menu again after purchase
             ;;
         3)
             buy_item "Bait" 100
+            show_shop  # Show shop menu again after purchase
             ;;
         0)
             print_success "Leaving the shop..."
@@ -40,7 +43,7 @@ show_shop() {
             ;;
         *)
             print_error "Invalid option. Try again."
-            show_shop
+            show_shop  # Show shop menu again after invalid option
             ;;
     esac
 }

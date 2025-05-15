@@ -12,20 +12,40 @@ A fun command-line Pocket Monster Safari Zone simulator with a beautiful termina
 
 ## 🎮 Features
 
+### Core Gameplay
 - 🎲 Random wild Pocket Monster encounters (up to Gen 8)
 - 🖼 16-bit Pocket Monster sprites shown in terminal (via `catimg`)
-- 🎯 Catching mechanics with real catch rate formula
+- 🎯 Advanced catching mechanics with real catch rate formula
 - 🍓 Bait and mud affect Pocket Monster behavior (just like Safari Zone)
-- 🏃 Fleeing logic based on stats
-- 📦 Collection is saved locally in `data/pokedex.json`
-- 📖 Built-in Pocket Monster viewer
-- 🎨 Beautiful terminal UI with:
+- 🏃 Intelligent fleeing logic based on stats and conditions
+- 📦 Persistent collection saved locally in `data/pokedex.json`
+- 📖 Comprehensive Pocket Monster viewer with detailed stats
+
+### Game Mechanics
+- 🎯 Multiple catching strategies:
+  - Safari Balls for direct capture attempts
+  - Berries to increase catch rate
+  - Mud to decrease flee rate
+- 💰 In-game economy with:
+  - Currency earned from successful captures
+  - Shop system for purchasing items
+  - Item inventory management
+- 📊 Detailed status tracking:
+  - Capture statistics
+  - Collection progress
+  - Current inventory
+  - Financial status
+
+### User Interface
+- 🎨 Beautiful terminal UI featuring:
   - Colorful headers and borders
   - Pocket Monster-themed icons and emojis
-  - Loading animations
+  - Smooth loading animations
   - Clear visual hierarchy
-  - Status indicators
-  - Inventory management
+  - Real-time status indicators
+  - Intuitive inventory management
+  - Progress bars and statistics
+  - Helpful tooltips and instructions
 
 ---
 
@@ -33,9 +53,9 @@ A fun command-line Pocket Monster Safari Zone simulator with a beautiful termina
 
 Make sure you have the following installed:
 
-- `bash`
-- `curl`
-- `jq`
+- `bash` (version 4.0 or higher)
+- `curl` (for API requests)
+- `jq` (for JSON processing)
 - `catimg` (for displaying images)
 - `shuf` (usually included with `coreutils`)
 
@@ -86,15 +106,39 @@ pokecatch/
 
 ## 🎯 How to Play
 
+### Basic Commands
+- `pokecatch` - Start the game
+- `pokecatch --help` - Show help menu
+- `pokecatch --version` - Display version information
+
+### Gameplay Flow
 1. Enter the Safari Zone to look for wild Pocket Monsters
 2. When you encounter a Pocket Monster, you can:
    - Throw a Safari Ball to catch it
    - Throw a Berry to make it easier to catch
-   - Throw Mud to make it harder to catch
+   - Throw Mud to make it harder to flee
    - Run away
-3. Visit the shop to buy more items
-4. Check your Pocket Monster dex to see your collection
-5. Monitor your status to track your progress
+3. Visit the shop to:
+   - Buy Safari Balls
+   - Purchase Berries
+   - Stock up on Mud
+   - Check your balance
+4. Check your Pocket Monster dex to:
+   - View your collection
+   - See detailed stats
+   - Track completion progress
+5. Monitor your status to:
+   - Track capture statistics
+   - View inventory
+   - Check financial status
+   - See game progress
+
+### Advanced Strategies
+- Use Berries before throwing Safari Balls for better catch rates
+- Apply Mud when encountering rare Pocket Monsters to prevent fleeing
+- Balance your inventory between different item types
+- Save your currency for important purchases
+- Track which Pocket Monsters you still need to catch
 
 ## 🎨 Terminal Requirements
 
@@ -102,6 +146,8 @@ The game uses ANSI colors and Unicode characters for its interface. Make sure yo
 - Supports ANSI color codes
 - Uses UTF-8 encoding
 - Can display Unicode characters (for icons and emojis)
+- Has a minimum width of 80 characters
+- Has a minimum height of 24 lines
 
 ## 🧪 Testing
 
@@ -116,38 +162,45 @@ The tests cover:
 - Catch rate calculations
 - Item effects
 - Save/load functionality
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Please ensure your code follows the project's style guidelines and includes appropriate tests.
+- UI rendering
+- Shop transactions
+- Inventory management
 
 ## 🔧 Troubleshooting
 
-Common issues and solutions:
+### Common Issues
 
-### Image Display Issues
+#### Image Display Issues
 - If Pocket Monster sprites aren't displaying:
   - Ensure `catimg` is properly installed
   - Check terminal color support: `echo -e "\e[31mRed Text\e[0m"`
   - Verify terminal size is sufficient
+  - Try running `catimg -w 40 assets/test.png` to test image display
 
-### Game Won't Start
-- Check all dependencies are installed
+#### Game Won't Start
+- Check all dependencies are installed:
+  ```bash
+  which bash curl jq catimg shuf
+  ```
 - Verify file permissions: `chmod +x bin/pokecatch`
 - Ensure data directory exists: `mkdir -p data`
+- Check for proper installation: `make install`
 
-### Save File Issues
+#### Save File Issues
 - If save data is corrupted:
   - Backup and remove `data/save.json`
   - Restart the game to create a new save file
+- If items are missing:
+  - Check `data/pokedex.json` for corruption
+  - Verify file permissions
+  - Ensure proper JSON formatting
+
+#### Performance Issues
+- If the game runs slowly:
+  - Check system resources
+  - Verify network connection (for API calls)
+  - Ensure sufficient disk space
+  - Check for background processes
 
 ## 📚 Documentation
 
@@ -164,3 +217,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Pocket Monster sprites and data from [PokéAPI](https://pokeapi.co/)
 - Inspired by the classic Pocket Monster Safari Zone mechanics
+- Terminal UI design inspired by various CLI games and tools
